@@ -54,9 +54,9 @@ class Node:
         yTop = (self.__y - 742)**2
         yBottom = (self.__y - 200)**2
         yLeft = (self.__y - 450.6)**2
-        if (xLeft + yLeft <= 50**2):
+        if (xLeft + yLeft <= 20600):
             return 0
-        elif (xQuad1 + yTop <= 50**2):
+        elif (xQuad1 + yTop <= 9000):
             return 1
-        elif (xQuad4 + yBottom <= 50**2):
+        elif (xQuad4 + yBottom <= 8130):
             return 2
