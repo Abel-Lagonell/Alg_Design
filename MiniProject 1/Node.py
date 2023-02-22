@@ -48,12 +48,12 @@ class Node:
     
     #Checks if node is in the radius of the price points and returns the price tier
     def inRadius(self):
-        xLeft = (self.__x - 200)**2
-        xQuad1 = (self.__x - 800)**2
-        xQuad4 = (self.__x - 650)**2
-        yTop = (self.__y - 700)**2
+        xLeft = (self.__x -167.5)**2
+        xQuad1 = (self.__x - 781)**2
+        xQuad4 = (self.__x - 658)**2
+        yTop = (self.__y - 742)**2
         yBottom = (self.__y - 200)**2
-        yLeft = (self.__y - 500)**2
+        yLeft = (self.__y - 450.6)**2
         if (xLeft + yLeft <= 50**2):
             return 0
         elif (xQuad1 + yTop <= 50**2):
