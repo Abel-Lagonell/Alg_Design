@@ -12,7 +12,7 @@ class Node:
     
     #String representation of the Node
     def __str__(self):
-        return "City: (" + str(self.__x) + ", " + str(self.__y) + ") Cost: " + str(self.__cost)
+        return "City: ({:4}, {:4}) \tCost: {:3} \tClass: {}".format(self.__x, self.__y, self.__cost, self.bracket())
     
     #Setting the cost of the node based on the location
     def setCost(self):
@@ -20,9 +20,11 @@ class Node:
             self.__cost = random.uniform(0.1, 0.5)
         elif (self.inRadius() == 1):
             self.__cost = random.uniform(2, 5)
+        elif (self.inRadius() == 2):
             self.__cost = random.uniform(5, 7)
         else:
             self.__cost = random.uniform(1, 2)
+        self.__cost = round(self.__cost, 2)
 
     #Setting the node as visited
     def setVisited(self):
@@ -60,3 +62,14 @@ class Node:
             return 1
         elif (xQuad4 + yBottom <= 8130):
             return 2
+
+    #Returns the price tier of the node
+    def bracket(self):
+        if (self.inRadius() == 0):
+            return "Low Class"
+        elif (self.inRadius() == 1):
+            return "Middle Class"
+        elif (self.inRadius() == 2):
+            return "High Class"
+        else:
+            return "default"
