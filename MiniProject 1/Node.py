@@ -4,9 +4,8 @@ import math
 # Initialize the Nodes
 class Node:
     #Constructor
-    def __init__(self):
-        self.__x = random.randint(0, 1000)
-        self.__y = random.randint(0, 1000)
+    def __init__(self, type = 0, x=500, y=500, radius= 5):
+        self.setCoords(type, x, y, radius)
         self.setCost()
         self.__visited = False
     
@@ -14,6 +13,15 @@ class Node:
     def __str__(self):
         return "City: ({:4}, {:4}) \tCost: {:3} \tClass: {}".format(self.__x, self.__y, self.__cost, self.bracket())
     
+    #Setting the coordinates of the node wether it is random or clustered
+    def setCoords(self, type=0, x=500, y=500 , radius=5):
+        if (type == 0): #Randomly generated coordinates
+            self.__x = random.randint(0, 1000)
+            self.__y = random.randint(0, 1000)
+        elif (type == 1): #Randomly generated Clustered coordinates
+            self.__x = random.randint(0, radius*4) + x
+            self.__y = random.randint(0, radius*4) + y
+
     #Setting the cost of the node based on the location
     def setCost(self):
         if (self.inRadius() == 0):

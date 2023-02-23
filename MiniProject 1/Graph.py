@@ -8,10 +8,10 @@ Template for Scatter Plot
     fig.show()
 
 data_frame is a 2D data structure like rows and columns of a table that is mutable
-    Synatx is : pandas.DataFrame(data, index, columns)
+    Syntax is : pandas.DataFrame(data, index, columns)
 
 Useful Functions:
-    COLOR_DISCRETE_SEQUENCE - modifys colors
+    COLOR_DISCRETE_SEQUENCE - modifies colors
     COLOR enables modification of the points
     OPACITY allows you to change transparency of point
 
