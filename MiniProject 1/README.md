@@ -18,3 +18,7 @@ Node.py Added functions:
 - setCoords() - Sets the coordinates of the node wether it is random or clustered
 
 Graph.py: Made some spelling corrections  
+1.5 - 
+Grid.py Added function:
+
+- greedySetCoverAlgorithm() - tries to add node to the set that is not already in the set, until the budget does not allow it to anymore
