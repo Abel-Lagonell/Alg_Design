@@ -90,3 +90,25 @@ class Grid:
             self.addIndexToSet(minIndex)
         #This is needed as when the budget is negative it will add the last node's cost to the overall budget
         self.subtractIndexToSet()
+    #Greedy Set Cover Algorithm
+    def greedySetCoverAlgorithm(self):
+        """
+        Creating three sets 
+            Universe: The set of all elements trying to be covered
+            Select Set: The set of all elements that have been covered towards budget
+            Uncovered set: The set of all elemnts that have not yet been covered
+        """
+        universe = set(range(1, self.__universeSize + 1))
+        uncoveredSet = set(self.__sets)
+        selectedSets = set()
+        #Takes two conditions, continues if budget is greater than 0 and Uncovered Set length is greater than 0
+        while(self.__budget > 0 and len(uncoveredSet) > 0):
+            if (universe.issubset(uncoveredSet > 0)):
+                continue
+            else:
+                #else body is important logic of the algorithm
+                selectSet = max(universe, key = lambda s:len(s.intersection(universe))) #Computes max overlap with remaining uncovered elelments returning the length of s and universe intersection
+                universe = universe.union(selectSet) #Combine elements in both sets into a new set
+                uncoveredSet.remove(selectSet) #Removes selectSet from uncoveredSet since its already been covered
+                self.__budget -= 1 #Ensures the loop will stop once budget gets to 0
+        return selectedSets
