@@ -12,6 +12,10 @@ class Node:
     #String representation of the Node
     def __str__(self):
         return "City: ({:4}, {:4}) \tCost: {:3} \tClass: {}".format(self.__x, self.__y, self.__cost, self.bracket())
+
+    def __eq__(self, other):
+        if (self.__x == other.getX() and self.__y == other.getY() and self.__cost == other.getCost()):
+            return True
     
     #Setting the coordinates of the node wether it is random or clustered
     def setCoords(self, type=0, x=500, y=500 , radius=5):

@@ -18,7 +18,19 @@ Node.py Added functions:
 - setCoords() - Sets the coordinates of the node wether it is random or clustered
 
 Graph.py: Made some spelling corrections  
-1.5 - 
+1.1 -  
 Grid.py Added function:
 
 - greedySetCoverAlgorithm() - tries to add node to the set that is not already in the set, until the budget does not allow it to anymore
+
+1.2 -  
+Node.py:
+Added Function to make sure that nodes are equal to each other.  
+
+Grid.py: Added Functions:
+
+- reset() - resets the variables to the given values
+- calcCoverage() - Returns the amount of nodes that the given node will affect
+- addNodeToSet() - A remake of addIndexToSet() that only accepts nodes and a list instead of the index
+- greedySetCoverAlgorithm() - the alg for the set Cover greedy algorithm
+  

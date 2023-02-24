@@ -6,9 +6,15 @@ class Grid:
     def __init__(self, budget=50, radius=5, type =0):
         self.__budget = budget
         self.__radius = radius
-        self.setNodes(type=0)
+        self.setNodes(type)
         self.__set = []
         self.__coverage = 0
+
+    #resets the values
+    def reset(self, budget=50, radius=5):
+        self.__budget = budget
+        self.__radius = radius
+
 
     #Get the list of Nodes
     def getNodes(self):
@@ -34,7 +40,7 @@ class Grid:
                 cluster_size = random.randint(3, 6)
 
     #Subtracting from the budget
-    def subtractBudget(self, Node):
+    def subtractBudget(self, Node:Node):
         self.__budget -= Node.getCost()
 
     #calculating total coverage
@@ -44,41 +50,52 @@ class Grid:
                 self.__coverage += 1
         return self.__coverage
 
-    #adding to the set of used nodes
-    def addToSet(self, Node):
-        self.__set.append(Node)
+    #adding node to set
+    def addToSet(self, Node:Node, set:list[Node.Node()]):
+        set.append(Node)
 
-    #Calculating the coverage of the node and setting surrounding nodes as visited
-    def coverageCalc(self, index):
+    #Setting the coverage of the node
+    def setCoverage(self, Node:Node):
         for node in self.__Nodes:
             if (node.getVisited() == False):
-                if (node.getDistance(self.__Nodes[index]) <= self.__radius):
+                if (node.getDistance(Node) <= self.__radius):
                     node.setVisited()
 
-    #subtract the cost from the budget and add the node to the set
-    def addIndexToSet(self, index):
-        self.subtractBudget(self.__Nodes[index])
-        self.__Nodes[index].setVisited()
-        self.addToSet(self.__Nodes[index])
-        self.coverageCalc(index)
+    #Calculating the coverage of the node and setting surrounding nodes as visited
+    def calcCoverage(self, Node:Node):
+        count =0
+        for node in self.__Nodes:
+            if (node.getDistance(Node) <= self.__radius and Node.getVisited() == False):
+                count +=1
+        return count
 
-    def subtractIndexToSet(self):
+    #Adding the node to the set and subtracting the cost from the budget
+    def addNodeToSet(self, Node:Node, set:list[Node.Node()]):
+        self.subtractBudget(Node)
+        self.addToSet(Node, set)
+        self.setCoverage(Node)
+
+    #subtract the cost from the budget and add the node to the set
+    def subtractIndexToSet(self, list:list[Node.Node()]):
         if(self.__budget != 0):
-            self.__budget += self.__set[-1].getCost()
-            self.__set.pop()
+            self.__budget += list[-1].getCost()
+            list.pop(-1)
 
     #THE ALGORITHMS
 
     #Random Algorithm
     def randomAlgorithm(self):
+        coveredSet = []
         while (self.__budget > 0):
             index = random.randint(0, len(self.__Nodes)-1) #randomly select a node
-            self.addIndexToSet(index)
+            self.addNodeToSet(self.__Nodes[index], coveredSet)
         #This is needed as when the budget is negative it will add the last node's cost to the overall budget
         self.subtractIndexToSet()
+        return coveredSet
 
     #Pure Greedy Algorithm
     def pureGreedyAlgorithm(self):
+        coveredSet = []
         while(self.__budget >0):
             minCost =100
             minIndex = 0
@@ -87,28 +104,29 @@ class Grid:
                 if (self.__Nodes[i].getCost() < minCost and self.__Nodes[i].getVisited() == False):
                     minCost = self.__Nodes[i].getCost()
                     minIndex = i
-            self.addIndexToSet(minIndex)
+            self.addNodeToSet(self.__Nodes[minIndex], coveredSet)
         #This is needed as when the budget is negative it will add the last node's cost to the overall budget
         self.subtractIndexToSet()
+        return coveredSet
+    
     #Greedy Set Cover Algorithm
     def greedySetCoverAlgorithm(self):
-        """
-        Creating three sets 
-            Universe: The set of all elements trying to be covered
-            Select Set: The set of all elements that have been covered towards budget
-            Uncovered set: The set of all elemnts that have not yet been covered
-        """
-        universe = set(range(1, self.__universeSize + 1))
-        uncoveredSet = set(self.__sets)
-        selectedSets = set()
-        #Takes two conditions, continues if budget is greater than 0 and Uncovered Set length is greater than 0
-        while(self.__budget > 0 and len(uncoveredSet) > 0):
-            if (universe.issubset(uncoveredSet > 0)):
-                continue
-            else:
-                #else body is important logic of the algorithm
-                selectSet = max(universe, key = lambda s:len(s.intersection(universe))) #Computes max overlap with remaining uncovered elelments returning the length of s and universe intersection
-                universe = universe.union(selectSet) #Combine elements in both sets into a new set
-                uncoveredSet.remove(selectSet) #Removes selectSet from uncoveredSet since its already been covered
-                self.__budget -= 1 #Ensures the loop will stop once budget gets to 0
-        return selectedSets
+        
+        universe = self.__Nodes
+        uncoveredSet = universe
+        coveredSet = []
+        maxCoverageRatio = 0
+
+        while (self.__budget > 0):
+            for i in range(len(uncoveredSet)):
+                if (uncoveredSet[i].getVisited() == True):
+                    uncoveredSet.pop(i)
+            for i in range(len(uncoveredSet)):
+                if (self.calcCoverage(i,uncoveredSet)/uncoveredSet[i].getCost() > maxCoverageRatio):
+                    maxCoverageRatio = self.calcCoverage(i)/uncoveredSet[i].getCost()
+                    maxIndex = i
+            self.addNodeToSet(uncoveredSet[maxIndex], coveredSet)
+            maxCoverageRatio = 0
+        #This is needed as when the budget is negative it will add the last node's cost to the overall budget
+        self.subtractIndexToSet()
+        return coveredSet
