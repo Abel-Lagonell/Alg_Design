@@ -8,7 +8,7 @@ class Node:
         self.setCoords(type, x, y, radius)
         self.setCost()
         self.__visited = False
-    
+ 
     #String representation of the Node
     def __str__(self):
         return "City: ({:4}, {:4}) \tCost: {:3} \tClass: {}".format(self.__x, self.__y, self.__cost, self.bracket())
