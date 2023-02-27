@@ -34,3 +34,9 @@ Grid.py: Added Functions:
 - addNodeToSet() - A remake of addIndexToSet() that only accepts nodes and a list instead of the index
 - greedySetCoverAlgorithm() - the alg for the set Cover greedy algorithm
   
+1.3
+Graph.py: Added Functions:
+
+- add_node()
+- randomize_coordinates()
+- plot()
