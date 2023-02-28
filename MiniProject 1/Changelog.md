@@ -40,3 +40,10 @@ Graph.py: Added Functions:
 - add_node()
 - randomize_coordinates()
 - plot()
+
+1.4
+Graph.py:
+
+-Modified graph to make oval look like a circle
+-Modified the circle to have no fill and be made of dashed lines
+-Implemnted a feature to highlight an indivudal node
