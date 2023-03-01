@@ -8,6 +8,8 @@ class Graph:
         self.circle_x = 10  # x-coordinate of the center of the circle
         self.circle_y = 10  # y-coordinate of the center of the circle
         self.circle_radius = 5  # radius of the circle
+        self.budget = budget
+        self.enclosed_cost = 0 
         
     def plot(self):
         # Generate a scatter plot of all nodes in the grid
@@ -26,23 +28,37 @@ class Graph:
         #yaxis=dict(range=[0,5]),  # Controls the range of the y-axis to an extent
         )
 
-        # Highlight nodes with cost greater than 0.5 by drawing a circle around them
-        nodes_to_highlight = [node for node in self.grid.getNodes() if node.getCost() > 0.5]
-        if nodes_to_highlight:
-            # calculate the center of the circle
-            center_x = sum(node.getX() for node in nodes_to_highlight) / len(nodes_to_highlight)
-            center_y = sum(node.getY() for node in nodes_to_highlight) / len(nodes_to_highlight)
-
-            # calculate the radius of the circle
-            max_distance = max(((node.getX() - center_x) ** 2 + (node.getY() - center_y) ** 2) ** 0.5 for node in nodes_to_highlight)
-            self.circle_radius = max_distance * .1
+        nodes_to_enclose = []
         for node in self.grid.getNodes():
-        # Draw a circle around the highlighted nodes
-            if (node.getX() - self.circle_x) ** 2 + (node.getY() - self.circle_y) ** 2 <= self.circle_radius ** 2:
-            
-                fig.add_shape(type="circle", xref="x", yref="y", x0=node.getX()-self.circle_radius, y0=node.getY()-self.circle_radius, x1=node.getX()+self.circle_radius, y1=node.getY()+self.circle_radius, line=dict(color="red", width=2, dash='dash'))
+            if self.enclosed_cost + node.getCost() <= self.budget:
+                nodes_to_enclose.append(node)
+                self.enclosed_cost += node.getCost()
+            else:
+                break
+        if nodes_to_enclose:
+            self.draw_circle(fig, nodes_to_enclose, self.budget)
+
         # Show the plot
-                fig.show()
+        fig.show()
+
+    def draw_circle(self, fig, nodes, budget): #Create separate functions for each algorithm and then call them from this function
+        # calculate the center of the circle
+        center_x = sum(node.getX() for node in nodes) / len(nodes)
+        center_y = sum(node.getY() for node in nodes) / len(nodes)
+
+        # calculate the radius of the circle
+        max_distance = max(((node.getX() - center_x) ** 2 + (node.getY() - center_y) ** 2) ** 0.5 for node in nodes)
+        self.circle_radius = max_distance * .1
+        self.circle_x = center_x
+        self.circle_y = center_y
+
+        for node in nodes:
+            fig.add_shape(type="circle", xref="x", yref="y", x0=node.getX()-self.circle_radius, y0=node.getY()-self.circle_radius, x1=node.getX()+self.circle_radius, y1=node.getY()+self.circle_radius, line=dict(color="red", width=2, dash='dash')) #Visually encircles nodes
+            fig.add_annotation(x=self.circle_x, y=self.circle_y,text=f'Budget: {budget:.2f}<br>Enclosed cost: {self.enclosed_cost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4) #Adds the textbox to the graph
+            # Draw a circle around the highlighted nodes
+           # if (node.getX() - self.circle_x) ** 2 + (node.getY() - self.circle_y) ** 2 <= self.circle_radius ** 2:
+                
+               
 
 # Creating the example and printing it out
 graph = Graph()

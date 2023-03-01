@@ -47,3 +47,11 @@ Graph.py:
 -Modified graph to make oval look like a circle
 -Modified the circle to have no fill and be made of dashed lines
 -Implemnted a feature to highlight an indivudal node
+
+1.5
+Graph.py:
+
+-Segmented Graph.py into two functions plot & draw_circle
+-Modified draw_circle to use budget and keep circling till it reaches budget
+-Added another graphic to the scatterplot displaying budget and money spent
+
