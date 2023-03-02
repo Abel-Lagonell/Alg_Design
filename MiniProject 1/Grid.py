@@ -62,10 +62,10 @@ class Grid:
                     node.setVisited()
 
     #Calculating the coverage of the node and setting surrounding nodes as visited
-    def calcCoverage(self, Node:Node):
+    def calcCoverage(self, Node:Node = Node.Node(), set:list[Node.Node()] = [Node.Node()]):
         count =0
-        for node in self.__Nodes:
-            if (node.getDistance(Node) <= self.__radius and Node.getVisited() == False):
+        for node in set:
+            if (node.getDistance(Node.getX(), Node.getY()) <= self.__radius and Node.getVisited() == False):
                 count +=1
         return count
 
@@ -84,13 +84,13 @@ class Grid:
     #THE ALGORITHMS
 
     #Random Algorithm
-    def randomAlgorithm(self):
+    def randomAlgorithm(self) -> list[Node.Node()]:
         coveredSet = []
         while (self.__budget > 0):
             index = random.randint(0, len(self.__Nodes)-1) #randomly select a node
             self.addNodeToSet(self.__Nodes[index], coveredSet)
         #This is needed as when the budget is negative it will add the last node's cost to the overall budget
-        self.subtractIndexToSet()
+        self.subtractIndexToSet(coveredSet)
         return coveredSet
 
     #Pure Greedy Algorithm
@@ -106,7 +106,7 @@ class Grid:
                     minIndex = i
             self.addNodeToSet(self.__Nodes[minIndex], coveredSet)
         #This is needed as when the budget is negative it will add the last node's cost to the overall budget
-        self.subtractIndexToSet()
+        self.subtractIndexToSet(coveredSet)
         return coveredSet
     
     #Greedy Set Cover Algorithm
@@ -128,5 +128,5 @@ class Grid:
             self.addNodeToSet(uncoveredSet[maxIndex], coveredSet)
             maxCoverageRatio = 0
         #This is needed as when the budget is negative it will add the last node's cost to the overall budget
-        self.subtractIndexToSet()
+        self.subtractIndexToSet(coveredSet)
         return coveredSet

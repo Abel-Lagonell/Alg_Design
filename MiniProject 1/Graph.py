@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-import Node
+import Node 
 import Grid
 #Shout out to my boy Abel couldn't have done this Graph without these two classes excited to have done some work that helped -
 class Graph:
@@ -10,7 +10,10 @@ class Graph:
         self.circle_radius = 5  # radius of the circle
         self.budget = budget
         self.enclosed_cost = 0 
-        
+    
+    #def find_nodes_randomly(self):
+    #    self.grid.randomAlgorithm(self)
+    
     def plot(self):
         # Generate a scatter plot of all nodes in the grid
         x = []
@@ -27,18 +30,15 @@ class Graph:
         #xaxis=dict(range=[0,50]), # Controls the range of the x-axis to an extent 
         #yaxis=dict(range=[0,5]),  # Controls the range of the y-axis to an extent
         )
+        
+        #nodes_to_enclose = self.grid.getNodesToEnlose(self.budget)
+        #if nodes_to_enclose:
+        #    self.draw_circle(fig, nodes_to_enclose, self.budget)
+#
+        #    # Show the plot
+        #    fig.show()
 
-        nodes_to_enclose = []
-        for node in self.grid.getNodes():
-            if self.enclosed_cost + node.getCost() <= self.budget:
-                nodes_to_enclose.append(node)
-                self.enclosed_cost += node.getCost()
-            else:
-                break
-        if nodes_to_enclose:
-            self.draw_circle(fig, nodes_to_enclose, self.budget)
-
-        # Show the plot
+        self.draw_circle(fig, self.grid.greedySetCoverAlgorithm(), self.budget)
         fig.show()
 
     def draw_circle(self, fig, nodes, budget): #Create separate functions for each algorithm and then call them from this function
@@ -58,8 +58,9 @@ class Graph:
             # Draw a circle around the highlighted nodes
            # if (node.getX() - self.circle_x) ** 2 + (node.getY() - self.circle_y) ** 2 <= self.circle_radius ** 2:
                 
-               
+              
 
 # Creating the example and printing it out
 graph = Graph()
+#graph.find_nodes_randomly()
 graph.plot()
