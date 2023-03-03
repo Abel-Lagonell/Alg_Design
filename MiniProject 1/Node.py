@@ -57,7 +57,7 @@ class Node:
         return self.__visited
 
     #Distance between two nodes
-    def getDistance(self, x, y):
+    def getDistance(self, x:int, y:int):
         return math.sqrt((self.__x - x)**2 + (self.__y - y)**2)
     
     #Checks if node is in the radius of the price points and returns the price tier

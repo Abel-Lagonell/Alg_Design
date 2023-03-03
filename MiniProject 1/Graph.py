@@ -1,10 +1,10 @@
 import plotly.graph_objects as go
-import Node 
-import Grid
+import Node
+from Grid import Grid
 #Shout out to my boy Abel couldn't have done this Graph without these two classes excited to have done some work that helped -
 class Graph:
     def __init__(self, budget=50, radius=5):
-        self.grid = Grid.Grid(budget=budget, radius=radius)
+        self.grid = Grid(budget=budget, radius=radius)
         self.circle_x = 10  # x-coordinate of the center of the circle
         self.circle_y = 10  # y-coordinate of the center of the circle
         self.circle_radius = 5  # radius of the circle
@@ -16,13 +16,9 @@ class Graph:
     
     def plot(self):
         # Generate a scatter plot of all nodes in the grid
-        x = []
-        y = []
-        cost = []
-        for node in self.grid.getNodes():
-            x.append(node.getX())
-            y.append(node.getY()) 
-            cost.append(node.getCost())
+        x = [node.getX() for node in self.grid.getNodes()]
+        y = [node.getY() for node in self.grid.getNodes()]
+        cost = [node.getCost() for node in self.grid.getNodes()]
         fig = go.Figure(data=go.Scatter(x=x, y=y, mode='markers', text=cost, hovertemplate='(%{x}, %{y})<br>Cost: %{text:.2f}<extra></extra>')) 
         
         # Customize the layout of the scatter plot
@@ -41,7 +37,7 @@ class Graph:
         self.draw_circle(fig, self.grid.greedySetCoverAlgorithm(), self.budget)
         fig.show()
 
-    def draw_circle(self, fig, nodes, budget): #Create separate functions for each algorithm and then call them from this function
+    def draw_circle(self, fig, nodes:list[Node.Node], budget:int): #Create separate functions for each algorithm and then call them from this function
         # calculate the center of the circle
         center_x = sum(node.getX() for node in nodes) / len(nodes)
         center_y = sum(node.getY() for node in nodes) / len(nodes)
