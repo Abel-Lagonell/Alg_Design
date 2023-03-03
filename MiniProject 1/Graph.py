@@ -3,8 +3,8 @@ import Node
 from Grid import Grid
 #Shout out to my boy Abel couldn't have done this Graph without these two classes excited to have done some work that helped -
 class Graph:
-    def __init__(self, budget=50, radius=5):
-        self.grid = Grid(budget=budget, radius=radius)
+    def __init__(self, budget=50, radius=5, type=1):
+        self.grid = Grid(budget=budget, radius=radius, type=type)
         self.circle_x = 10  # x-coordinate of the center of the circle
         self.circle_y = 10  # y-coordinate of the center of the circle
         self.circle_radius = 5  # radius of the circle
@@ -34,6 +34,8 @@ class Graph:
         #    # Show the plot
         #    fig.show()
 
+        self.draw_circle(fig, self.grid.randomAlgorithm(), self.budget)
+        self.draw_circle(fig, self.grid.pureGreedyAlgorithm(), self.budget)
         self.draw_circle(fig, self.grid.greedySetCoverAlgorithm(), self.budget)
         fig.show()
 

@@ -6,6 +6,7 @@ class Grid:
     def __init__(self, budget=50, radius=5, type =0):
         self.__budget = budget
         self.__radius = radius
+        self.__Nodes = []
         self.setNodes(type)
         self.__set = []
         self.__coverage = 0
@@ -35,8 +36,8 @@ class Grid:
                 x = random.randint(0, 1000)
                 y = random.randint(0, 1000)
                 for i in range(cluster_size):
-                    self.__Nodes.append(Node(type=1, x=x, y=y, radius=self.__radius))
-                    totalNodes += 1
+                    self.__Nodes.insert(i, Node(type=1, x=x, y=y, radius=self.__radius))
+                totalNodes += cluster_size
                 cluster_size = random.randint(3, 6)
 
     #Subtracting from the budget
