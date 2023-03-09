@@ -50,8 +50,8 @@ class Graph:
 
     def draw_circle(self, fig, nodes: list[Node.Node], budget: int, color: str):
         # calculate the center of the circle
-        if nodes is None:
-            print("Error: nodes parameter is None")
+        if not nodes:  # check if nodes is empty
+            print("Error: nodes parameter is empty")
             return
         center_x = sum(node.getX() for node in nodes) / len(nodes)
         center_y = sum(node.getY() for node in nodes) / len(nodes)
@@ -65,6 +65,7 @@ class Graph:
         for node in nodes:
             fig.add_shape(type="circle", xref="x", yref="y", x0=node.getX()-self.circle_radius, y0=node.getY()-self.circle_radius, x1=node.getX()+self.circle_radius, y1=node.getY()+self.circle_radius, line=dict(color=color, width=2, dash='dash')) #Visually encircles nodes
             fig.add_annotation(x=self.circle_x, y=self.circle_y,text=f'Budget: {budget:.2f}<br>Enclosed cost: {self.enclosed_cost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4) #Adds the textbox to the graph
+
 
                 
               
