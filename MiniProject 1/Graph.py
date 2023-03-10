@@ -1,6 +1,8 @@
 import plotly.graph_objects as go
 import Node
 from Grid import Grid
+import timeit #Records time taken for each algorithm
+
 #Shout out to my boy Abel couldn't have done this Graph without these two classes excited to have done some work that helped -
 class Graph:
     def __init__(self, budget=50, radius=5, type=0):
@@ -10,13 +12,31 @@ class Graph:
         self.circle_radius = 5  # radius of the circle
         self.budget = budget
         self.enclosed_cost = 0 
+
+    def time_complexity(self, n):
+        # Run each algorithm n times and record the time taken for each run
+        random_time = timeit.timeit(lambda: self.grid.randomAlgorithm(), number=n)
+        greedy_set_cover_time = timeit.timeit(lambda: self.grid.greedySetCoverAlgorithm(), number=n)
+        pure_greedy_time = timeit.timeit(lambda: self.grid.pureGreedyAlgorithm(), number=n)
+
+         # Print the average time taken for each algorithm
+        print(f'Random Algorithm: {random_time / n:.5f} seconds')
+        print(f'Pure Greedy Algorithm: {pure_greedy_time / n:.5f} seconds')
+        print(f'Greedy Set Cover Algorithm: {greedy_set_cover_time / n:.5f} seconds')
+        
+        # Print the average time taken for each algorithm
+        return f'Random Algorithm: {random_time / n:.5f} seconds\nPure Greedy Algorithm: {pure_greedy_time / n:.5f} seconds\nGreedy Set Cover Algorithm: {greedy_set_cover_time / n:.5f} seconds'
     
     def plot(self):
         # Generate a scatter plot of all nodes in the grid
         x = [node.getX() for node in self.grid.getNodes()]
         y = [node.getY() for node in self.grid.getNodes()]
         cost = [node.getCost() for node in self.grid.getNodes()]
-        
+
+        #random_time = 10.2
+        #greedy_set_cover_time = 2.1
+        #pure_greedy_time = 0.5
+       
         # Create a color map to color code each algorithm
         colors = {'Random Algorithm': 'blue', 'Pure Greedy Algorithm': 'green', 'Greedy Set Cover Algorithm': 'red'}
         
@@ -40,9 +60,12 @@ class Graph:
         fig.update_layout(title="Node Scatter Plot", xaxis_title="Coverage", yaxis_title="Radius", height=1000, width=1200, margin=dict(l=200, r=200, b=200, t=200, pad=4), legend=dict(title='Algorithms', yanchor='top', y=0.70, xanchor='left', x=1.00,))
                         #xaxis=dict(range=[0,50]), # Controls the range of the x-axis to an extent 
                         #yaxis=dict(range=[0,5]),  # Controls the range of the y-axis to an extent
-        
         fig.show()
 
+        #go.Figure.fig.go.Bar(x=['Random Algorithm', 'Greedy Set Cover Algorithm', 'Pure Greedy Algorithm'], y=[random_time, greedy_set_cover_time, pure_greedy_time], text=[f'Time: {random_time} s', f'Time: {greedy_set_cover_time} s', f'Time: {pure_greedy_time} s'], textposition='auto',marker=dict(color='rgb(255, 123, 0)',line=dict(color='rgb(8, 48, 107)', width=1.5),),opacity=0.6)
+
+        #fig.update_layout(title='Algorithm Time Complexities',xaxis_title='Algorithm',yaxis_title='Time (s)',height=600,width=800,margin=dict(l=50, r=50, b=100, t=100, pad=4),)
+        #fig.show()
 
     def draw_circle(self, fig, nodes: list[Node.Node], budget: int, color: str):
         # calculate the center of the circle
@@ -62,7 +85,7 @@ class Graph:
             fig.add_annotation(x=1.25, y=0.90,xref = "paper", yref = "paper",  text=f'Greedy : {budget:.2f}<br>Enclosed cost: {self.enclosed_cost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
             fig.add_annotation(x=1.25, y=0.80,xref = "paper", yref = "paper",  text=f'Set Cover : {budget:.2f}<br>Enclosed cost: {self.enclosed_cost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
 
-# Creating the example and printing it out
-graph = Graph()
-#graph.find_nodes_randomly()
-graph.plot()
+displayTime = Graph()
+displayTime.time_complexity(100)
+#graph = Graph()
+#graph.plot()
