@@ -39,9 +39,17 @@ class Grid:
                 totalNodes += cluster_size
                 cluster_size = random.randint(3, 6)
 
+    def getSmallestCost(self, set:list[Node]):
+        smallest = set[0]
+        for node in set:
+            if (node.getCost() < smallest.getCost()):
+                smallest = node
+        return smallest
+
     #Subtracting from the budget
     def subtractBudget(self, Node:Node):
         self.__budget -= Node.getCost()
+        self.__budget = round(self.__budget, 2)
 
     #calculating total coverage
     def calculateCoverage(self):
@@ -78,25 +86,30 @@ class Grid:
     #subtract the cost from the budget and add the node to the set
     def subtractIndexToSet(self, list:list[Node]):
         if(self.__budget != 0):
-            self.__budget += list[-1].getCost()
+            self.__budget += round(list[-1].getCost())
+            self.__budget = round(self.__budget, 2)
             list.pop(-1)
 
     #THE ALGORITHMS
 
     #Random Algorithm
-    def randomAlgorithm(self):
+    def randomAlgorithm(self,totalUsedBudget = [0,0,0]):
         tempBudget = self.__budget
         coveredSet = []
+        uncoveredSet = self.__Nodes
         while (self.__budget > 0):
-            index = random.randint(0, len(self.__Nodes)-1) #randomly select a node
-            self.addNodeToSet(self.__Nodes[index], coveredSet)
-        #This is needed as when the budget is negative it will add the last node's cost to the overall budget
-        self.subtractIndexToSet(coveredSet)
+            index = random.randint(0, len(uncoveredSet)-1) #randomly select a node
+            if (uncoveredSet[index].getCost() <= self.__budget):    
+                self.addNodeToSet(uncoveredSet[index], coveredSet)
+                uncoveredSet.pop(index)
+            if (self.getSmallestCost(uncoveredSet).getCost() > self.__budget):
+                break
+        totalUsedBudget[0] = tempBudget - self.__budget
         self.__budget = tempBudget
         return coveredSet
 
     #Pure Greedy Algorithm
-    def pureGreedyAlgorithm(self):
+    def pureGreedyAlgorithm(self, totalUsedBudget = [0,0,0]):
         tempBudget = self.__budget
         coveredSet = []
         while(self.__budget >0):
@@ -110,17 +123,16 @@ class Grid:
             self.addNodeToSet(minIndex, coveredSet)
         #This is needed as when the budget is negative it will add the last node's cost to the overall budget
         self.subtractIndexToSet(coveredSet)
+        totalUsedBudget[1] = tempBudget - self.__budget
         self.__budget = tempBudget
         return coveredSet
     
     #Greedy Set Cover Algorithm
-    def greedySetCoverAlgorithm(self):
+    def greedySetCoverAlgorithm(self, totalUsedBudget = [0,0,0]):
         tempBudget = self.__budget
-        universe = self.__Nodes
-        uncoveredSet = universe
+        uncoveredSet = self.__Nodes
         coveredSet = []
         maxCoverageRatio = 0
-
         while (self.__budget > 0):
             count =0
             for node in uncoveredSet:
@@ -135,5 +147,6 @@ class Grid:
             maxCoverageRatio = 0
         #This is needed as when the budget is negative it will add the last node's cost to the overall budget
         self.subtractIndexToSet(coveredSet)
+        totalUsedBudget[2] = tempBudget - self.__budget
         self.__budget = tempBudget
         return coveredSet
