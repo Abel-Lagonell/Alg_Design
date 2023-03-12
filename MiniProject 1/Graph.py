@@ -34,10 +34,11 @@ class Graph:
         fig2.add_trace(go.Bar(x=['Random Algorithm', 'Pure Greedy Algorithm', 'Greedy Set Cover Algorithm'], y=[timeComplexity.getAverageTimeRandomAlgorithm(), timeComplexity.getAverageTimePureGreedyAlgorithm(), timeComplexity.getAverageTimeGreedySetCoverAlgorithm()], marker_color=['blue', 'green', 'red'], name='Average Time of Algorithms'))
         
         # Add a trace for each algorithm | Responsible for the Legend table
-        for i, (name, nodes) in enumerate([('Random Algorithm', self.grid.randomAlgorithm()), ('Pure Greedy Algorithm', self.grid.pureGreedyAlgorithm()), ('Greedy Set Cover Algorithm', self.grid.greedySetCoverAlgorithm())]):
+        enclosedCost = [0,0,0]
+        for i, (name, nodes) in enumerate([('Random Algorithm', self.grid.randomAlgorithm(enclosedCost)), ('Pure Greedy Algorithm', self.grid.pureGreedyAlgorithm(enclosedCost)), ('Greedy Set Cover Algorithm', self.grid.greedySetCoverAlgorithm(enclosedCost))]):
             
             # Draw circles for the nodes selected by the algorithm
-            self.draw_circle(fig1, nodes, self.budget, color=colors[name])
+            self.draw_circle(fig1, nodes, self.budget, color=colors[name], enclosedCost=enclosedCost)
 
             
             # Add a legend for the algorithm
@@ -54,7 +55,7 @@ class Graph:
         
         
 
-    def draw_circle(self, fig, nodes: list[Node.Node], budget: int, color: str):
+    def draw_circle(self, fig, nodes: list[Node.Node], budget: int, color: str, enclosedCost: list[int]):
         # calculate the center of the circle
        
         center_x = sum(node.getX() for node in nodes) / len(nodes)
@@ -65,12 +66,11 @@ class Graph:
         self.circle_radius = max_distance * .1
         self.circle_x = center_x
         self.circle_y = center_y
-        self.enclosed_cost = sum(node.getCost() for node in nodes)
         for node in nodes:
             fig.add_shape(type="circle", xref="x", yref="y", x0=node.getX()-self.circle_radius, y0=node.getY()-self.circle_radius, x1=node.getX()+self.circle_radius, y1=node.getY()+self.circle_radius, line=dict(color=color, width=2, dash='dash')) #Visually encircles nodes
-            fig.add_annotation(x=1.25, y=1,xref = "paper", yref = "paper",  text=f'Random: {budget:.2f}<br>Enclosed cost: {self.enclosed_cost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4) #Responsible for Budget Textbox
-            fig.add_annotation(x=1.25, y=0.90,xref = "paper", yref = "paper",  text=f'Greedy : {budget:.2f}<br>Enclosed cost: {self.enclosed_cost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
-            fig.add_annotation(x=1.25, y=0.80,xref = "paper", yref = "paper",  text=f'Set Cover : {budget:.2f}<br>Enclosed cost: {self.enclosed_cost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
+            fig.add_annotation(x=1.25, y=1,xref = "paper", yref = "paper",  text=f'Random: {budget:.2f}<br>Enclosed cost: {enclosedCost[0]:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4) #Responsible for Budget Textbox
+            fig.add_annotation(x=1.25, y=0.90,xref = "paper", yref = "paper",  text=f'Greedy : {budget:.2f}<br>Enclosed cost: {enclosedCost[1]:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
+            fig.add_annotation(x=1.25, y=0.80,xref = "paper", yref = "paper",  text=f'Set Cover : {budget:.2f}<br>Enclosed cost: {enclosedCost[2]:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
 
 graph = Graph()
 graph.plot()
