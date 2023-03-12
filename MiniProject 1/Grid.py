@@ -8,8 +8,6 @@ class Grid:
         self.__radius = radius
         self.__Nodes = []
         self.setNodes(type)
-        self.__set = []
-        self.__coverage = 0
 
     #resets the values
     def reset(self, budget=50, radius=5):
@@ -19,10 +17,6 @@ class Grid:
     #Get the list of Nodes
     def getNodes(self):
         return self.__Nodes
-
-    #Get the set of used Nodes
-    def getSet(self):
-        return self.__set
 
     #Set the list of Nodes and in which ever form
     def setNodes(self, type=0):
@@ -39,13 +33,14 @@ class Grid:
                 totalNodes += cluster_size
                 cluster_size = random.randint(3, 6)
 
+    #Get the smallest costing node
     def getSmallestCost(self, set:list[Node]):
         smallest = set[0]
         for node in set:
             if (node.getCost() < smallest.getCost()):
                 smallest = node
         return smallest
-
+    
     #Subtracting from the budget
     def subtractBudget(self, Node:Node):
         self.__budget -= Node.getCost()
@@ -53,10 +48,11 @@ class Grid:
 
     #calculating total coverage
     def calculateCoverage(self):
+        coverage = 0
         for node in self.__Nodes:
             if (node.getVisited() == True) :
-                self.__coverage += 1
-        return self.__coverage
+                coverage += 1
+        return coverage
 
     #adding node to set
     def addToSet(self, Node:Node, set:list[Node]):
@@ -69,12 +65,24 @@ class Grid:
                 if (node.getDistance(Node.getX(), Node.getY()) <= self.__radius):
                     node.setVisited()
 
+    def resetCoverage(self):
+        for node in self.__Nodes:
+            node.setVisited(False)
+
     #Calculating the coverage of the node and setting surrounding nodes as visited
     def calcCoverage(self, Node:Node, set:list[Node]):
         count =0
         for node in set:
             if (node.getDistance(Node.getX(), Node.getY()) <= self.__radius and Node.getVisited() == False):
                 count +=1
+        return count
+    
+    def calcTotalCoverage(self, set:list[Node]):
+        count =0
+        for node in set:
+            for node2 in self.__Nodes:
+                if (node.getDistance(node2.getX(), node2.getY()) <= self.__radius):
+                    count +=1
         return count
 
     #Adding the node to the set and subtracting the cost from the budget
@@ -96,13 +104,11 @@ class Grid:
     def randomAlgorithm(self,totalUsedBudget = [0,0,0]):
         tempBudget = self.__budget
         coveredSet = []
-        uncoveredSet = self.__Nodes
         while (self.__budget > 0):
-            index = random.randint(0, len(uncoveredSet)-1) #randomly select a node
-            if (uncoveredSet[index].getCost() <= self.__budget):    
-                self.addNodeToSet(uncoveredSet[index], coveredSet)
-                uncoveredSet.pop(index)
-            if (self.getSmallestCost(uncoveredSet).getCost() > self.__budget):
+            index = random.randint(0, len(self.__Nodes)-1) #randomly select a node
+            if (self.__Nodes[index].getCost() <= self.__budget):    
+                self.addNodeToSet(self.__Nodes[index], coveredSet)
+            if (self.getSmallestCost(self.__Nodes).getCost() > self.__budget):
                 break
         totalUsedBudget[0] = tempBudget - self.__budget
         self.__budget = tempBudget
@@ -114,7 +120,6 @@ class Grid:
         coveredSet = []
         while(self.__budget >0):
             minCost =100
-            minIndex = 0
             #Go through the list of nodes and find the one with the lowest cost
             for node in self.__Nodes:
                 if (node.getCost() < minCost and node.getVisited() == False):
@@ -130,23 +135,22 @@ class Grid:
     #Greedy Set Cover Algorithm
     def greedySetCoverAlgorithm(self, totalUsedBudget = [0,0,0]):
         tempBudget = self.__budget
-        uncoveredSet = self.__Nodes
         coveredSet = []
         maxCoverageRatio = 0
+        maxIndex = None
         while (self.__budget > 0):
-            count =0
-            for node in uncoveredSet:
-                if (node.getVisited() == True):
-                    uncoveredSet.pop(count)
-                count +=1
-            for node in uncoveredSet:
-                if (self.calcCoverage(node,uncoveredSet)/node.getCost() > maxCoverageRatio):
-                    maxCoverageRatio = self.calcCoverage(node,uncoveredSet)/node.getCost()
+            for node in self.__Nodes:
+                if (self.calcCoverage(node,self.__Nodes)/node.getCost() > maxCoverageRatio):
+                    maxCoverageRatio = self.calcCoverage(node,self.__Nodes)/node.getCost()
                     maxIndex = node
-            self.addNodeToSet(maxIndex, coveredSet)
+            if maxIndex is not None: self.addNodeToSet(maxIndex, coveredSet)
             maxCoverageRatio = 0
         #This is needed as when the budget is negative it will add the last node's cost to the overall budget
         self.subtractIndexToSet(coveredSet)
         totalUsedBudget[2] = tempBudget - self.__budget
         self.__budget = tempBudget
         return coveredSet
+    
+#grid = Grid(radius=10)
+#for node in grid.greedySetCoverAlgorithm(): print (node)
+#print(grid.calcTotalCoverage(grid.greedySetCoverAlgorithm()))

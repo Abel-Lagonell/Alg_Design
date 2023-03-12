@@ -39,8 +39,8 @@ class Node:
         self.__cost = round(self.__cost, 2)
 
     #Setting the node as visited
-    def setVisited(self):
-        self.__visited = True
+    def setVisited(self, value:bool = True):
+        self.__visited = value
 
     #GET FUNCTIONS
 
