@@ -37,7 +37,7 @@ class Grid:
     def getSmallestCost(self, set:list[Node]):
         smallest = set[0]
         for node in set:
-            if (node.getCost() < smallest.getCost()):
+            if (node.getCost() < smallest.getCost() and node.getVisited() == False):
                 smallest = node
         return smallest
     
@@ -119,12 +119,7 @@ class Grid:
         tempBudget = self.__budget
         coveredSet = []
         while(self.__budget >0):
-            minCost =100
-            #Go through the list of nodes and find the one with the lowest cost
-            for node in self.__Nodes:
-                if (node.getCost() < minCost and node.getVisited() == False):
-                    minCost = node.getCost()
-                    minIndex = node
+            minIndex = self.getSmallestCost(self.__Nodes)
             self.addNodeToSet(minIndex, coveredSet)
         #This is needed as when the budget is negative it will add the last node's cost to the overall budget
         self.subtractIndexToSet(coveredSet)
@@ -140,8 +135,9 @@ class Grid:
         maxIndex = None
         while (self.__budget > 0):
             for node in self.__Nodes:
-                if (self.calcCoverage(node,self.__Nodes)/node.getCost() > maxCoverageRatio):
-                    maxCoverageRatio = self.calcCoverage(node,self.__Nodes)/node.getCost()
+                tempRatio= self.calcCoverage(node, self.__Nodes)/node.getCost()
+                if (tempRatio > maxCoverageRatio):
+                    maxCoverageRatio = tempRatio
                     maxIndex = node
             if maxIndex is not None: self.addNodeToSet(maxIndex, coveredSet)
             maxCoverageRatio = 0
