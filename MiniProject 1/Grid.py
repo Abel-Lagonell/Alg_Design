@@ -146,7 +146,3 @@ class Grid:
         totalUsedBudget[2] = tempBudget - self.__budget
         self.__budget = tempBudget
         return coveredSet
-    
-#grid = Grid(radius=10)
-#for node in grid.greedySetCoverAlgorithm(): print (node)
-#print(grid.calcTotalCoverage(grid.greedySetCoverAlgorithm()))
