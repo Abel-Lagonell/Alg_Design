@@ -5,7 +5,7 @@ from TimeComplexity import TimeComplexity
 
 #Shout out to my boy Abel couldn't have done this Graph without these two classes excited to have done some work that helped -
 class Graph:
-    def __init__(self, budget=50, radius=5, type=0):
+    def __init__(self, budget=50, radius=5, type=1):
         self.grid = Grid(budget=budget, radius=radius, type=type)
         self.circle_x = 10  # x-coordinate of the center of the circle
         self.circle_y = 10  # y-coordinate of the center of the circle

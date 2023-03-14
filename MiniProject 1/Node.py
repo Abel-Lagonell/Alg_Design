@@ -23,8 +23,8 @@ class Node:
             self.__x = random.randint(0, 1000)
             self.__y = random.randint(0, 1000)
         elif (type == 1): #Randomly generated Clustered coordinates
-            self.__x = random.randint(0, radius*4) + x
-            self.__y = random.randint(0, radius*4) + y
+            self.__x = random.randint(0, radius*8) + x
+            self.__y = random.randint(0, radius*8) + y
 
     #Setting the cost of the node based on the location
     def setCost(self):
