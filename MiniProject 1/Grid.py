@@ -21,7 +21,7 @@ class Grid:
     #Set the list of Nodes and in which ever form
     def setNodes(self, type=0):
         if (type == 0):
-            self.__Nodes = [Node() for i in range(100)]
+            self.__Nodes = [Node(ID=i) for i in range(100)]
         elif (type == 1):
             totalNodes = 0
             cluster_size = random.randint(3, 6)
@@ -29,7 +29,7 @@ class Grid:
                 x = random.randint(0, 1000)
                 y = random.randint(0, 1000)
                 for i in range(cluster_size):
-                    self.__Nodes.insert(i, Node(type=1, x=x, y=y, radius=self.__radius))
+                    self.__Nodes.insert(i, Node(type=1, x=x, y=y, radius=self.__radius, ID=totalNodes+i))
                 totalNodes += cluster_size
                 cluster_size = random.randint(3, 6)
 

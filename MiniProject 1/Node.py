@@ -4,14 +4,18 @@ import math
 # Initialize the Nodes
 class Node:
     #Constructor
-    def __init__(self, type = 0, x=500, y=500, radius= 5):
+    def __init__(self, type = 0, x=500, y=500, radius= 5, ID=0):
         self.setCoords(type, x, y, radius)
         self.setCost()
         self.__visited = False
+        self.ID = ID
  
     #String representation of the Node
     def __str__(self):
         return "City: ({:4}, {:4}) \tCost: {:3} \tClass: {}".format(self.__x, self.__y, self.__cost, self.bracket())
+    
+    def __repr__(self):
+        return "{:03}".format(self.ID)
 
     def __eq__(self, other):
         if (self.__x == other.getX() and self.__y == other.getY() and self.__cost == other.getCost()):
@@ -41,6 +45,9 @@ class Node:
     #Setting the node as visited
     def setVisited(self, value:bool = True):
         self.__visited = value
+
+    def setID(self, ID:int):
+        self.ID = ID
 
     #GET FUNCTIONS
 
