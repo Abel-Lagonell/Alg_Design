@@ -1,4 +1,5 @@
 from Node import Node
+from PriorityQueue import PriorityQueue as PQ
 import random
 
 class Grid:
@@ -126,6 +127,19 @@ class Grid:
         totalUsedBudget[1] = tempBudget - self.__budget
         self.__budget = tempBudget
         return coveredSet
+
+    def Greedy(self, totalUsedBudget = [0,0,0]):
+        tempBudget = self.__budget
+        coveredSet = []
+        pq = PQ()
+        for node in self.__Nodes:
+            pq.push(node, node.getCost())
+        while(self.__budget >0):
+            minIndex = pq.pop()
+            self.addNodeToSet(minIndex, coveredSet)
+        totalUsedBudget[1] = tempBudget - self.__budget
+        self.__budget = tempBudget
+        return coveredSet
     
     #Greedy Set Cover Algorithm
     def greedySetCoverAlgorithm(self, totalUsedBudget = [0,0,0]):
@@ -143,6 +157,20 @@ class Grid:
             maxCoverageRatio = 0
         #This is needed as when the budget is negative it will add the last node's cost to the overall budget
         self.subtractIndexToSet(coveredSet)
+        totalUsedBudget[2] = tempBudget - self.__budget
+        self.__budget = tempBudget
+        return coveredSet      
+        
+    def setCover(self, totalUsedBudget = [0,0,0]):
+        tempBudget = self.__budget
+        coveredSet = []
+        pq = PQ()
+        for node in self.__Nodes:
+            pq.push(node, self.calcCoverage(node, self.__Nodes)/node.getCost())
+        while(self.__budget >0):
+            minIndex = pq.pop()
+            self.addNodeToSet(minIndex, coveredSet)
+
         totalUsedBudget[2] = tempBudget - self.__budget
         self.__budget = tempBudget
         return coveredSet
