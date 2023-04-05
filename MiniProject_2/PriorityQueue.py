@@ -1,15 +1,24 @@
 from Node import Node as Nd
-import random
+import copy
 
 class PriorityQueue:
     #Constructor
     def __init__(self):
         self.__queue = list[tuple[Nd, int]]()
         self.__size = 0
-
-    def __init__(self, queue:list[tuple[Nd, int]]):
-        self.__queue = queue
-        self.__size = queue.getSize()
+        return
+    
+    def __repr__(self) -> str:
+        str = ""
+        for ce in self.__queue:
+            str += "{} \t Weight: {} \n".format(*ce) 
+        return str
+    
+    def __deepcopy__(self, memo):
+        new_obj = PriorityQueue()
+        for node,weight in self.__queue:
+            new_obj.push(node,weight)
+        return new_obj
     
     def push(self, node:Nd, weight:int):
         self.__queue.append([node, weight])
@@ -24,8 +33,14 @@ class PriorityQueue:
         return temp
     
     def popIndex(self, index:int) -> Nd:
+        self.__size -= 1
         return self.__queue.pop(index)[0]
 
+    def calcSize(self):
+        count =0
+        for x in self.__queue:
+            count += 1
+        return count
     
     def top(self) -> Nd:
         if (self.__size == 0):
@@ -38,10 +53,10 @@ class PriorityQueue:
     def sort(self, index:int):
         if (index == 0):
             return
-        while (index> 0):
+        while (index > 0):
             temp1 = self.__queue[index][1]
             temp2 = self.__queue[index-1][1]
-            if (temp1 > temp2):
+            if (temp1 < temp2):
                 self.__swap(index, index-1)
                 index -= 1
             else:
@@ -55,16 +70,16 @@ class PriorityQueue:
     def getSize(self) -> int:
         return self.__size
     
-    def getQueue(self) -> list:
+    def getQueue(self) -> list[Nd]:
         return self.__queue
     
     def prune(self):
-        for i in range(self.__size):
-            if (self.__queue[i][0].getVisited()):
+        for i in range(self.__size-1):
+            tempNode = self.__queue[i][0]
+            if (tempNode.getVisited()):
                 self.__queue.pop(i)
                 self.__size -= 1
-                self.__sort(i)
-    
+        
     def setWeight(self, weight:int, index:int):
         self.__queue[index][1] = weight
         self.sort(index)
@@ -91,3 +106,11 @@ class PriorityQueue:
             if (self.__queue[i][0].ID == ID):
                 return i
         return -1
+    
+if (__name__ == "__main__"):
+    pq = PriorityQueue()
+    n1 = Nd(cost=5)
+    n2 = Nd(cost=5)
+    pq.push(n1,1)
+    pq.push(n2,2)
+    print(pq.getQueue())

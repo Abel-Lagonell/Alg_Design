@@ -22,10 +22,10 @@ class Node:
             return True
     
     #Setting the coordinates of the node wether it is random or clustered
-    def setCoords(self, type=0, x=500, y=500):
+    def setCoords(self, type=0, x=50, y=50):
         if (type == 0): #Randomly generated coordinates
-            self.__x = random.randint(0, 1000)
-            self.__y = random.randint(0, 1000)
+            self.__x = random.randint(0, 100)
+            self.__y = random.randint(0, 100)
         elif (type == 1): #Randomly generated Clustered coordinates
             self.__x = random.randint(0, 40) + x
             self.__y = random.randint(0, 40) + y
