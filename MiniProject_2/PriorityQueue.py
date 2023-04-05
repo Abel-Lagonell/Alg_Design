@@ -47,7 +47,7 @@ class PriorityQueue:
             return None
         return self.__queue[0][0]
 
-    def sort(self):
+    def sortWhole(self):
         self.__queue.sort(key=lambda x: x[1], reverse=True)
 
     def sort(self, index:int):
@@ -71,10 +71,17 @@ class PriorityQueue:
         return self.__size
     
     def getQueue(self) -> list[Nd]:
+        return [ node[0] for node in self.__queue]
+    
+    def getWeight(self) -> list[int]:
+        return [node[1] for node in self.__queue]
+    
+    def getPQ(self) -> list[Nd, int]:
         return self.__queue
     
     def prune(self):
         for i in range(self.__size-1):
+            if (i > self.__size-1): return
             tempNode = self.__queue[i][0]
             if (tempNode.getVisited()):
                 self.__queue.pop(i)

@@ -12,7 +12,7 @@ class Node:
 
     #String representation of the Node
     def __str__(self):
-        return "City: ({:4}, {:4}) \tCost: {:3} \tClass: {}".format(self.__x, self.__y, self.__cost, self.bracket())
+        return "City: ({:3}, {:3})\tCost: {:1.2f}\tClass: {}".format(self.__x, self.__y, self.__cost, self.bracket())
     
     def __repr__(self):
         return "{:02}".format(self.ID)
@@ -27,8 +27,8 @@ class Node:
             self.__x = random.randint(0, 100)
             self.__y = random.randint(0, 100)
         elif (type == 1): #Randomly generated Clustered coordinates
-            self.__x = random.randint(0, 40) + x
-            self.__y = random.randint(0, 40) + y
+            self.__x = random.randint(0, 20) + x
+            self.__y = random.randint(0, 20) + y
     
     def setCost(self, cost:int):
         self.__cost = cost
@@ -59,7 +59,7 @@ class Node:
         return math.sqrt((self.__x - x)**2 + (self.__y - y)**2)
     
     #Checks if node is in the radius of the price points and returns the price tier
-    def inRadius(self):
+    def inRadius(self):#! needs to change
         xLeft = (self.__x -167.5)**2
         xQuad1 = (self.__x - 781)**2
         xQuad4 = (self.__x - 658)**2
