@@ -60,29 +60,3 @@ class Node:
     #Distance between two nodes
     def getDistance(self, x:int, y:int):
         return math.sqrt((self.__x - x)**2 + (self.__y - y)**2)
-    
-    #Checks if node is in the radius of the price points and returns the price tier
-    def inRadius(self):#! needs to change
-        xLeft = (self.__x -167.5)**2
-        xQuad1 = (self.__x - 781)**2
-        xQuad4 = (self.__x - 658)**2
-        yTop = (self.__y - 742)**2
-        yBottom = (self.__y - 200)**2
-        yLeft = (self.__y - 450.6)**2
-        if (xLeft + yLeft <= 20600):
-            return 0
-        elif (xQuad1 + yTop <= 9000):
-            return 1
-        elif (xQuad4 + yBottom <= 8130):
-            return 2
-
-    #Returns the price tier of the node
-    def bracket(self):
-        if (self.inRadius() == 0):
-            return "Low Class"
-        elif (self.inRadius() == 1):
-            return "Middle Class"
-        elif (self.inRadius() == 2):
-            return "High Class"
-        else:
-            return "default"

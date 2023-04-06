@@ -62,7 +62,7 @@ class Grid:
     
     def reCalc(self, set:PQ):
         for i in range(set.getSize()-1):
-            set.getPQ()[i][1] = self.calcCover(set.getQueue()[i], set.getQueue())
+            set.getPQ()[i][1] = round(self.calcCover(set.getQueue()[i], set.getQueue())/set.getQueue()[i].getCost(),2)
         set.sortWhole()
 
     def Random(self):
@@ -141,7 +141,7 @@ class Grid:
         return (covered_set, self.totalCover())
 
 if (__name__ == "__main__"):
-    grid = Grid(budget=40, uniform=False)
+    grid = Grid(budget=20, uniform=True)
     setBud = grid.Random()
     set = setBud[0]
     bud = setBud[1]
