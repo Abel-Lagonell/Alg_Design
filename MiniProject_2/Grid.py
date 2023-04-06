@@ -1,6 +1,5 @@
 import copy 
 import random as rand
-import math
 from PriorityQueue import PriorityQueue as PQ
 from Node import Node
 
@@ -48,6 +47,10 @@ class Grid:
             if (node.getVisited() == True) :
                 coverage += 1
         return coverage
+    
+    def resetCoverage(self):
+        for node in self.__NODES:
+            node.setVisited(False)
 
     #Calculating the coverage of the node and setting surrounding nodes as visited
     def calcCover(self, Node:Node, set:list[Node]):
@@ -66,10 +69,10 @@ class Grid:
         tempBudget = self.__BUDGET
         coveredSet= list[Node]()
         tempPQ = copy.deepcopy(self.__PQCOST)
-        while (tempPQ.top().getCost() < tempBudget):
+        while (tempPQ.top() != None and tempPQ.top().getCost() < tempBudget):
             ID = rand.randint(0, tempPQ.getSize()-1)
             index = tempPQ.findID(ID=ID)
-            tempNode = tempPQ.getQueue()[index][0]
+            tempNode = tempPQ.getQueue()[index]
             if (tempNode.getCost() <= tempBudget):
                 self.setCoverage(tempNode, tempPQ.getQueue())
                 tempBudget -= tempNode.getCost()
@@ -83,12 +86,11 @@ class Grid:
         tempBudget = self.__BUDGET
         coveredSet= list[Node]()
         tempPQ = copy.deepcopy(self.__PQCOST)
-        while (tempPQ.top().getCost() < tempBudget):
+        while (tempPQ.top() != None and tempPQ.top().getCost() < tempBudget):
             tempNode = tempPQ.pop()
             self.setCoverage(tempNode, tempPQ.getQueue())
             coveredSet.append(tempNode)
             tempBudget -= tempNode.getCost()
-            tempPQ.prune()
         return (coveredSet, round(self.__BUDGET-tempBudget,2))
 
     def SetCover(self):
@@ -96,15 +98,13 @@ class Grid:
         coveredSet= list[Node]()
         tempPQ = copy.deepcopy(self.__PQCOST)
         self.reCalc(tempPQ)
-        while(tempPQ.top().getCost() < tempBudget):
+        while(tempPQ.top() != None and tempPQ.top().getCost() < tempBudget):
             tempNode = tempPQ.pop()
             self.setCoverage(tempNode, tempPQ.getQueue())
             coveredSet.append(tempNode)
             tempBudget -= tempNode.getCost()
             tempPQ.prune()
             self.reCalc(tempPQ)
-            print(tempPQ.getQueue())
-            print(tempPQ.getWeight())
         return (coveredSet, round(self.__BUDGET-tempBudget,2))
 
     def Dynamic(self):
@@ -141,10 +141,21 @@ class Grid:
         #Return the covered set and the total coverage
         return (covered_set, self.totalCover())
 
-grid = Grid(budget=20, uniform=False)
-setBud = grid.SetCover()
-set = setBud[0]
-bud = setBud[1]
-print("Budget: ", bud)
-print("Set: ", set)
-print(grid.getNodes())
+if (__name__ == "__main__"):
+    grid = Grid(budget=20, uniform=False)
+    setBud = grid.Random()
+    set = setBud[0]
+    bud = setBud[1]
+    print("Budget: ", bud)
+    print("Set: ", set)
+    print(grid.getNodes())
+    print("Total Coverage: ", grid.totalCover())
+    grid.resetCoverage()
+    setBud = grid.Greedy()
+    set = setBud[0]
+    bud = setBud[1]
+    print("Budget: ", bud)
+    print("Set: ", set)
+    print(grid.getNodes())
+    print("Total Coverage: ", grid.totalCover())
+    grid.resetCoverage()

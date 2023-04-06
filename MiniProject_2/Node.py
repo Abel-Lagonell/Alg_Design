@@ -18,8 +18,11 @@ class Node:
         return "{:02}".format(self.ID)
 
     def __eq__(self, other):
+        if (other == None):
+            return False
         if (self.__x == other.getX() and self.__y == other.getY() and self.__cost == other.getCost()):
             return True
+        
     
     #Setting the coordinates of the node wether it is random or clustered
     def setCoords(self, type=0, x=50, y=50):
@@ -27,8 +30,8 @@ class Node:
             self.__x = random.randint(0, 100)
             self.__y = random.randint(0, 100)
         elif (type == 1): #Randomly generated Clustered coordinates
-            self.__x = random.randint(0, 20) + x
-            self.__y = random.randint(0, 20) + y
+            self.__x = random.randint(0, 10) + x
+            self.__y = random.randint(0, 10) + y
     
     def setCost(self, cost:int):
         self.__cost = cost
