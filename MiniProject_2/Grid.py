@@ -107,7 +107,35 @@ class Grid:
             print(tempPQ.getWeight())
         return (coveredSet, round(self.__BUDGET-tempBudget,2))
 
+    def Dynamic(self):
+    #Dynamic Programming Algorithm uses a bottom-up approach
+        #Creating list to store max coverage for each node and remaining budget
+        max_coverage = [[0] * (self.__BUDGET + 1) for __ in range(len(self.__NODES) + 1)] 
 
+        #Loop through each node and each remaining budget
+        for i in range(1, len(self.__NODES) + 1): 
+            for j in range(1, self.__BUDGET + 1):
+                node_cost = self.__NODES[i - 1].getCost()
+                if node_cost <= j:
+                    #If the current node is cheaper than the remaining budget, include it within the current budget
+                        #Check if adding result in a higher coverage
+                    with_node = self.calcCover(self.__NODES[i - 1], self.__NODES) + max_coverage[i - 1][j - node_cost]
+                    without_node = max_coverage[i - 1][j]
+                    max_coverage[i][j] = max(with_node, without_node)
+                else:
+                    #If the current node is more expensive than the remaining budget, do not include it
+                    max_coverage[i][j] = max_coverage[i - 1][j]
+        #Backtracking to find the nodes that were included in the optimal solution
+        #Indicator of dynamic programming as it looks up rather than recalculating
+        covered_set = []
+        j = self.__BUDGET
+        for i in range(len(self.__NODES), 0, -1):
+            if max_coverage[i][j] != max_coverage[i - 1][j]:
+                #If the node is included in the optimal solution, add it to the covered set, subtract its cost from the remaining budget
+                covered_set.append(self.__NODES[i - 1])
+                j -= self.__NODES[i - 1].getCost()
+        #Return the covered set and the total coverage
+        return (covered_set, self.totalCover())
 
 grid = Grid(budget=20, uniform=False)
 setBud = grid.SetCover()
