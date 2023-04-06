@@ -77,7 +77,6 @@ class Grid:
                 self.setCoverage(tempNode, tempPQ.getQueue())
                 tempBudget -= tempNode.getCost()
                 coveredSet.append(tempNode)
-                tempPQ.prune()
             else: 
                 tempPQ.popIndex(index)
         return (coveredSet, round(self.__BUDGET-tempBudget))
@@ -142,13 +141,12 @@ class Grid:
         return (covered_set, self.totalCover())
 
 if (__name__ == "__main__"):
-    grid = Grid(budget=20, uniform=False)
+    grid = Grid(budget=40, uniform=False)
     setBud = grid.Random()
     set = setBud[0]
     bud = setBud[1]
     print("Budget: ", bud)
     print("Set: ", set)
-    print(grid.getNodes())
     print("Total Coverage: ", grid.totalCover())
     grid.resetCoverage()
     setBud = grid.Greedy()
@@ -156,6 +154,12 @@ if (__name__ == "__main__"):
     bud = setBud[1]
     print("Budget: ", bud)
     print("Set: ", set)
-    print(grid.getNodes())
+    print("Total Coverage: ", grid.totalCover())
+    grid.resetCoverage()
+    setBud = grid.Random()
+    set = setBud[0]
+    bud = setBud[1]
+    print("Budget: ", bud)
+    print("Set: ", set)
     print("Total Coverage: ", grid.totalCover())
     grid.resetCoverage()
