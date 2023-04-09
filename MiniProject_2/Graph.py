@@ -15,7 +15,7 @@ class Graph:
         cost = [node.getCost() for node in nodeList]
 
         #Create a color map to color code each algorithm
-        color_map = {'Random Algorithm': 'blue', 'Pure Greedy Algorithm': 'green', 'Greedy Set Cover Algorithm': 'red'}
+        color_map = {'Random Algorithm': 'blue', 'Pure Greedy Algorithm': 'green', 'Greedy Set Cover Algorithm': 'red', 'Dynamic Programming Algorithm': 'purple'}
 
         #initialize the figure
         timeComplexity = TimeComplexity()
@@ -28,13 +28,14 @@ class Graph:
             name='All Nodes'))
         
         #Add the bar graph for the time complexity
-        tComFig.add_trace(go.Bar(x=['Random Algorithm', 'Pure Greedy Algorithm', 'Greedy Set Cover Algorithm'], y=[timeComplexity.getAverageTimeRandomAlgorithm(), timeComplexity.getAverageTimePureGreedyAlgorithm(), timeComplexity.getAverageTimeGreedySetCoverAlgorithm()], marker_color=['blue', 'green', 'red'], name='Average Time of Algorithms'))
+        tComFig.add_trace(go.Bar(x=['Random Algorithm', 'Pure Greedy Algorithm', 'Greedy Set Cover Algorithm', 'Dynamic Programming Algorithm'], y=[timeComplexity.getAverageTimeRandomAlgorithm(), timeComplexity.getAverageTimePureGreedyAlgorithm(), timeComplexity.getAverageTimeGreedySetCoverAlgorithm(), timeComplexity.getAverageTimeDynamicProgrammingAlgorithm()], marker_color=['blue', 'green', 'red', 'purple'], name='Average Time of Algorithms'))
 
         #Add a trace for each algorithm
         for i, (name, NodeBudget) in enumerate(
             [('Random Algorithm', self.grid.Random()), 
              ('Pure Greedy Algorithm', self.grid.Greedy()), 
-             ('Greedy Set Cover Algorithm', self.grid.SetCover())]
+             ('Greedy Set Cover Algorithm', self.grid.SetCover()),
+             ('Dynamic Programming Algorithm', self.grid.Dynamic())]
         ):
             Node = NodeBudget[0]
             Budget = NodeBudget[1]
@@ -70,6 +71,8 @@ class Graph:
             fig.add_annotation(x=1.3, y=0.80,xref = "paper", yref = "paper",  text=f'Greedy cost: {enclosedCost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
         elif(type==2):
             fig.add_annotation(x=1.3, y=0.75,xref = "paper", yref = "paper",  text=f'Set Cover cost: {enclosedCost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
+        elif(type==3):
+            fig.add_annotation(x=1.3, y=0.70,xref = "paper", yref = "paper",  text=f'Dynamic cost: {enclosedCost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
 
         
     
