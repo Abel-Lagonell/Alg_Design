@@ -67,30 +67,35 @@ class Grid:
 
     def Random(self):
         tempBudget = self.__BUDGET
-        coveredSet= list[Node]()
+        self.__coveredSet = []
         tempPQ = copy.deepcopy(self.__PQCOST)
-        while (tempPQ.top() != None and tempPQ.top().getCost() < tempBudget):
+        while (tempBudget > 0):
             ID = rand.randint(0, tempPQ.getSize()-1)
             index = tempPQ.findID(ID=ID)
             tempNode = tempPQ.getQueue()[index]
             if (tempNode.getCost() <= tempBudget):
-                self.setCoverage(tempNode, tempPQ.getQueue())
+                self.setCoverage(tempNode, [tempNode])
                 tempBudget -= tempNode.getCost()
-                coveredSet.append(tempNode)
-            else: 
+                self.__coveredSet.append(tempNode)
                 tempPQ.popIndex(index)
-        return (coveredSet, round(self.__BUDGET-tempBudget))
+            else: 
+                break
+        return (self.__coveredSet, round(self.__BUDGET-tempBudget))
     
     def Greedy(self):
         tempBudget = self.__BUDGET
-        coveredSet= list[Node]()
+        coveredSet= []
         tempPQ = copy.deepcopy(self.__PQCOST)
         while (tempPQ.top() != None and tempPQ.top().getCost() < tempBudget):
-            tempNode = tempPQ.pop()
-            self.setCoverage(tempNode, tempPQ.getQueue())
-            coveredSet.append(tempNode)
-            tempBudget -= tempNode.getCost()
-        return (coveredSet, round(self.__BUDGET-tempBudget,2))
+            tempNode = tempPQ.top()
+            if tempNode.getCost() <= tempBudget:
+                tempNode = tempPQ.pop()
+                self.setCoverage(tempNode, [tempNode])
+                coveredSet.append(tempNode)
+                tempBudget -= tempNode.getCost()
+            else:
+                break
+        return (coveredSet, round(self.__BUDGET-tempBudget))
 
     def SetCover(self):
         tempBudget = self.__BUDGET
@@ -107,38 +112,48 @@ class Grid:
         return (coveredSet, round(self.__BUDGET-tempBudget,2))
 
     def Dynamic(self):
-    #Dynamic Programming Algorithm uses a bottom-up approach
-        #Creating list to store max coverage for each node and remaining budget
-        #Abel yelled at me for not creating temp values
-        #Deepcopy ensure that the new copy will not affect the original nodes list
+        # Dynamic Programming Algorithm uses a bottom-up approach
+        # Creating list to store max coverage for each node and remaining budget
+        # Abel yelled at me for not creating temp values
+        # Deepcopy ensure that the new copy will not affect the original nodes list
         tempBudget = self.__BUDGET
         tempNodes = copy.deepcopy(self.__NODES)
-        max_coverage = [[0] * (tempBudget + 1) for __ in range(len(tempNodes) + 1)] 
+        max_coverage = [[0] * (tempBudget + 1) for __ in range(len(tempNodes) + 1)]
 
-        #Loop through each node and each remaining budget
-        for i in range(1, len(tempNodes) + 1): 
-            for j in range(1, tempBudget + 1):
-                node_cost = tempNodes[i - 1].getCost()
-                if node_cost <= j:
-                    #If the current node is cheaper than the remaining budget, include it within the current budget
-                        #Check if adding result in a higher coverage
-                    with_node = self.calcCover(tempNodes[i - 1], tempNodes) + max_coverage[i - 1][j - node_cost]
-                    without_node = max_coverage[i - 1][j]
-                    max_coverage[i][j] = max(with_node, without_node)
+        # Loop through each node and each possible budget
+        for i in range(len(tempNodes) + 1):
+            for j in range(tempBudget + 1):
+                # Base case: if the budget is 0 or the node index is 0, set max coverage to 0
+                if i == 0 or j == 0:
+                    max_coverage[i][j] = 0
+                # If the node's cost is less than or equal to the remaining budget, 
+                # calculate the coverage for including and excluding the node, and take the maximum
+                elif tempNodes[i - 1].getCost() <= j:
+                    coverage_include = tempNodes[i - 1].getCoverage() + max_coverage[i - 1][j - tempNodes[i - 1].getCost()]
+                    coverage_exclude = max_coverage[i - 1][j]
+                    max_coverage[i][j] = max(coverage_include, coverage_exclude)
+                # If the node's cost is greater than the remaining budget, set max coverage to the coverage 
+                # without including the node
                 else:
-                    #If the current node is more expensive than the remaining budget, do not include it
                     max_coverage[i][j] = max_coverage[i - 1][j]
-        #Backtracking to find the nodes that were included in the optimal solution
-        #Indicator of dynamic programming as it looks up rather than recalculating
-        covered_set = []
+        # Backtrack to find the nodes with the maximum coverage
+        i = len(tempNodes)
         j = tempBudget
-        for i in range(len(tempNodes), 0, -1):
+        selected_nodes = []
+        while i > 0 and j > 0:
+            # If the current node was included in the maximum coverage, add it to the selected nodes list
             if max_coverage[i][j] != max_coverage[i - 1][j]:
-                #If the node is included in the optimal solution, add it to the covered set, subtract its cost from the remaining budget
-                covered_set.append(tempNodes[i - 1])
+                selected_nodes.append(tempNodes[i - 1])
                 j -= tempNodes[i - 1].getCost()
-        #Return the covered set and the total coverage
-        return (covered_set, self.totalCover())
+            i -= 1
+        # Set the coverage status of the selected nodes
+        for node in self.__NODES:
+            if node in selected_nodes:
+                node.setVisited(True)
+            else:
+                node.setVisited(False)
+        # Return the selected nodes and the total coverage
+        return (selected_nodes, max_coverage[len(tempNodes)][tempBudget])
 
 if (__name__ == "__main__"):
     grid = Grid(budget=20, uniform=True)
