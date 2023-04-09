@@ -140,40 +140,38 @@ class Grid:
         tempNodes = copy.deepcopy(self.__NODES)
         max_coverage = [[0] * (tempBudget + 1) for __ in range(len(tempNodes) + 1)]
 
+        # Initialize list to store covered nodes
+        covered_nodes = []
+
         # Loop through each node and each possible budget
         for i in range(len(tempNodes) + 1):
             for j in range(tempBudget + 1):
                 # Base case: if the budget is 0 or the node index is 0, set max coverage to 0
                 if i == 0 or j == 0:
                     max_coverage[i][j] = 0
-                # If the node's cost is less than or equal to the remaining budget, 
-                # calculate the coverage for including and excluding the node, and take the maximum
-                elif tempNodes[i - 1].getCost() <= j:
-                    coverage_include = tempNodes[i - 1].getCoverage() + max_coverage[i - 1][j - tempNodes[i - 1].getCost()]
-                    coverage_exclude = max_coverage[i - 1][j]
-                    max_coverage[i][j] = max(coverage_include, coverage_exclude)
-                # If the node's cost is greater than the remaining budget, set max coverage to the coverage 
-                # without including the node
                 else:
-                    max_coverage[i][j] = max_coverage[i - 1][j]
-        # Backtrack to find the nodes with the maximum coverage
-        i = len(tempNodes)
-        j = tempBudget
-        selected_nodes = []
-        while i > 0 and j > 0:
-            # If the current node was included in the maximum coverage, add it to the selected nodes list
-            if max_coverage[i][j] != max_coverage[i - 1][j]:
-                selected_nodes.append(tempNodes[i - 1])
-                j -= tempNodes[i - 1].getCost()
-            i -= 1
-        # Set the coverage status of the selected nodes
-        for node in self.__NODES:
-            if node in selected_nodes:
-                node.setVisited(True)
-            else:
-                node.setVisited(False)
-        # Return the selected nodes and the total coverage
-        return (selected_nodes, max_coverage[len(tempNodes)][tempBudget])
+                    # Calculate the coverage of the current node
+                    node_coverage = self.calcCover(tempNodes[i-1], tempNodes)
+                    # Calculate the remaining budget after selecting the current node
+                    remaining_budget = j - tempNodes[i-1].getCost()
+                    # Calculate the maximum coverage with and without the current node
+                    max_with_node = node_coverage + max_coverage[int(i-1)][int(remaining_budget)]
+                    max_without_node = max_coverage[i-1][j]
+                    # Choose the maximum coverage between with and without the current node
+                    if max_with_node > max_without_node:
+                        # Set the coverage of the current node and add it to the covered nodes list
+                        tempNodes[i-1].setVisited()
+                        covered_nodes.append(tempNodes[i-1])
+                        max_coverage[i][j] = max_with_node
+                    else:
+                        max_coverage[i][j] = max_without_node
+
+        # Reset the visited flag of all nodes
+        self.resetCoverage()
+
+        return (covered_nodes, max_coverage[len(tempNodes)][tempBudget])
+
+
 
 if (__name__ == "__main__"):
     grid = Grid(budget=40, uniform=True)
