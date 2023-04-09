@@ -40,6 +40,16 @@ class Grid:
                 if (node.getDistance(node2.getX(), node2.getY()) <= 5):
                     node2.setVisited()
 
+
+    #calculating total coverage
+    def totalCover(self):
+        coverage = 0
+        for node in self.__NODES:
+            if (node.getVisited() == True) :
+                coverage += 1
+        return coverage
+    
+    
     #calculating total coverage
     def totalCover(self):
         coverage = 0
@@ -52,22 +62,35 @@ class Grid:
         for node in self.__NODES:
             node.setVisited(False)
 
-    #Calculating the coverage of the node and setting surrounding nodes as visited
-    def calcCover(self, Node:Node, set:list[Node]):
+    #Calculating the coverage of the set
+    def totalCover(self, set:list[Node]):
         count =0
+        self.resetCoverage()
         for node in set:
-            if (node.getDistance(Node.getX(), Node.getY()) <= 5 and Node.getVisited() == False):
+            for node2 in self.__NODES:
+                if (node.getDistance(node2.getX(), node2.getY()) <= 5 and node2.getVisited() == False):
+                    count +=1
+                    node2.setVisited()
+        return count
+    
+    #Calculating the coverage of the node and setting surrounding nodes as visited
+    def calcCover(self, node:Node, set:list[Node]):
+        count =0
+        for node2 in set:
+            if (node.getDistance(node2.getX(), node2.getY()) <= 5 and node2.getVisited() == False):
                 count +=1
         return count
     
     def reCalc(self, set:PQ):
         for i in range(set.getSize()-1):
-            set.getPQ()[i][1] = round(self.calcCover(set.getQueue()[i], set.getQueue())/set.getQueue()[i].getCost(),2)
+            tempCalc = self.calcCover(set.getQueue()[i],set.getQueue())
+            tempCost = set.getQueue()[i].getCost()
+            set.getPQ()[i][1] = round(tempCalc/tempCost,2)
         set.sortWhole()
 
     def Random(self):
         tempBudget = self.__BUDGET
-        self.__coveredSet = []
+        coveredSet = list[Node]()
         tempPQ = copy.deepcopy(self.__PQCOST)
         while (tempBudget > 0):
             ID = rand.randint(0, tempPQ.getSize()-1)
@@ -76,32 +99,29 @@ class Grid:
             if (tempNode.getCost() <= tempBudget):
                 self.setCoverage(tempNode, [tempNode])
                 tempBudget -= tempNode.getCost()
-                self.__coveredSet.append(tempNode)
+                coveredSet.append(tempNode)
                 tempPQ.popIndex(index)
             else: 
                 break
-        return (self.__coveredSet, round(self.__BUDGET-tempBudget))
+        return (coveredSet, round(self.__BUDGET-tempBudget))
     
     def Greedy(self):
         tempBudget = self.__BUDGET
-        coveredSet= []
+        coveredSet= list[Node]()
         tempPQ = copy.deepcopy(self.__PQCOST)
         while (tempPQ.top() != None and tempPQ.top().getCost() < tempBudget):
-            tempNode = tempPQ.top()
-            if tempNode.getCost() <= tempBudget:
-                tempNode = tempPQ.pop()
-                self.setCoverage(tempNode, [tempNode])
-                coveredSet.append(tempNode)
-                tempBudget -= tempNode.getCost()
-            else:
-                break
-        return (coveredSet, round(self.__BUDGET-tempBudget))
+            tempNode = tempPQ.pop()
+            self.setCoverage(tempNode, tempPQ.getQueue())
+            coveredSet.append(tempNode)
+            tempBudget -= tempNode.getCost()
+        return (coveredSet, round(self.__BUDGET-tempBudget,2))
 
     def SetCover(self):
         tempBudget = self.__BUDGET
         coveredSet= list[Node]()
         tempPQ = copy.deepcopy(self.__PQCOST)
         self.reCalc(tempPQ)
+        print(tempPQ.getPQ())
         while(tempPQ.top() != None and tempPQ.top().getCost() < tempBudget):
             tempNode = tempPQ.pop()
             self.setCoverage(tempNode, tempPQ.getQueue())
@@ -156,25 +176,25 @@ class Grid:
         return (selected_nodes, max_coverage[len(tempNodes)][tempBudget])
 
 if (__name__ == "__main__"):
-    grid = Grid(budget=20, uniform=True)
-    setBud = grid.Random()
+    grid = Grid(budget=40, uniform=True)
+    setBud = grid.SetCover()
     set = setBud[0]
     bud = setBud[1]
     print("Budget: ", bud)
     print("Set: ", set)
-    print("Total Coverage: ", grid.totalCover())
+    print("Total Coverage: ", grid.totalCover(set))
     grid.resetCoverage()
     setBud = grid.Greedy()
     set = setBud[0]
     bud = setBud[1]
     print("Budget: ", bud)
     print("Set: ", set)
-    print("Total Coverage: ", grid.totalCover())
+    print("Total Coverage: ", grid.totalCover(set))
     grid.resetCoverage()
     setBud = grid.Random()
     set = setBud[0]
     bud = setBud[1]
     print("Budget: ", bud)
     print("Set: ", set)
-    print("Total Coverage: ", grid.totalCover())
+    print("Total Coverage: ", grid.totalCover(set=set))
     grid.resetCoverage()

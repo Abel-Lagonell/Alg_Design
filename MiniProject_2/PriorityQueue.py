@@ -48,7 +48,7 @@ class PriorityQueue:
         return self.__queue[0][0]
 
     def sortWhole(self):
-        self.__queue.sort(key=lambda x: x[1], reverse=False)
+        self.__queue.sort(key=lambda x: x[1], reverse=True)
 
     def sort(self, index:int):
         if (index == 0):
