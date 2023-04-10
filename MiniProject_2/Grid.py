@@ -121,7 +121,6 @@ class Grid:
         coveredSet= list[Node]()
         tempPQ = copy.deepcopy(self.__PQCOST)
         self.reCalc(tempPQ)
-        print(tempPQ.getPQ())
         while(tempPQ.top() != None and tempPQ.top().getCost() < tempBudget):
             tempNode = tempPQ.pop()
             self.setCoverage(tempNode, tempPQ.getQueue())
@@ -141,7 +140,7 @@ class Grid:
         max_coverage = [[0] * (tempBudget + 1) for __ in range(len(tempNodes) + 1)]
 
         # Initialize list to store covered nodes
-        covered_nodes = []
+        covered_nodes = list[Node]()
 
         # Loop through each node and each possible budget
         for i in range(len(tempNodes) + 1):
@@ -169,8 +168,13 @@ class Grid:
         # Reset the visited flag of all nodes
         self.resetCoverage()
 
-        return (covered_nodes, max_coverage[len(tempNodes)][tempBudget])
+        return (covered_nodes, round(self.__BUDGET - remaining_budget,2))
 
+    #Using dynamic allocation of nodes to get the best coverage recursively
+    def Dynamic2(self):
+        tempBudget = self.__BUDGET
+        tempNodes = copy.deepcopy(self.__NODES)
+        
 
 
 if (__name__ == "__main__"):
@@ -196,3 +200,9 @@ if (__name__ == "__main__"):
     print("Set: ", set)
     print("Total Coverage: ", grid.totalCover(set=set))
     grid.resetCoverage()
+    setBud = grid.Dynamic()
+    set = setBud[0]
+    bud = setBud[1]
+    print("Budget: ", bud)
+    print("Set: ", set)
+    print("Total Coverage: ", grid.totalCover(set=set))
