@@ -1,5 +1,6 @@
 import copy 
 import random as rand
+import numpy as np
 from PriorityQueue import PriorityQueue as PQ
 from Node import Node
 
@@ -173,13 +174,53 @@ class Grid:
     #Using dynamic allocation of nodes to get the best coverage recursively
     def Dynamic2(self):
         tempBudget = self.__BUDGET
-        tempNodes = copy.deepcopy(self.__NODES)
+        tempNodes = copy.deepcopy(self.__PQCOST.getQueue())
+
+        #Setting up the matrix that will hold all the values
+        self.__dtype = np.dtype([('coverage', int), ('IDs', int, (18,))])
+        self.__default_val = (0, np.full(shape = (18,), fill_value=-1, dtype=int))
+        self.__matrix = np.full(shape = (19,tempBudget+1), fill_value=-1, dtype=self.__dtype)
+        cell = self.__checkMatrix(18,tempBudget,tempNodes)
+        coveredSet = list[Node]()
+        for i in cell[1]:
+            coveredSet.append(copy.deepcopy(self.__PQCOST[self.__PQCOST.findID(i)]))
+        tempBudget =0
+        for node in coveredSet:
+            tempBudget += node.getCost()
+        return (coveredSet,tempBudget)
         
+    #Dynamic Programming Algorithm uses a bottom-up approach
+    def __DynamicRecur(self, n:int, b:int, tempNodes:list[Node]):
+        #Base Case
+        if (n==0):
+            return self.__default_val
+        #If the cost of the node is higher than the budget
+        if (tempNodes[n-1].getCost() > b):
+            return self.__checkMatrix(n-1,b,tempNodes)
+        else:
+            withNode = self.__checkMatrix(n-1, round(b-tempNodes[n-1].getCost()),tempNodes)
+            withoutNode = self.__checkMatrix(n-1,b,tempNodes)
+            coverNode = self.calcCover(tempNodes[n-1],tempNodes)
+            if (withNode[0] + coverNode > withoutNode[0]):
+                self.setCoverage(tempNodes[n-1],tempNodes)
+                return (withNode[0] + coverNode, np.append(withNode[1],tempNodes[n-1].getID()))
+            else:
+                return withoutNode
+        
+    def __checkMatrix(self, n:int, b:int, tempNodes:list[Node]) -> tuple[int, list[int]]:
+        #Check if the cell has been initialized
+        if (self.__matrix[n,b][0] == -1):
+            self.__matrix[n,b] = self.__DynamicRecur(n,b,tempNodes)#! Errors here about putting an array badly
+            return self.__matrix[n,b]
+        #If it has been initialized, return the value
+        else:
+            return self.__matrix[n,b]
+
 
 
 if (__name__ == "__main__"):
-    grid = Grid(budget=40, uniform=True)
-    setBud = grid.SetCover()
+    grid = Grid(budget=20, uniform=True)
+    """setBud = grid.SetCover()
     set = setBud[0]
     bud = setBud[1]
     print("Budget: ", bud)
@@ -192,7 +233,7 @@ if (__name__ == "__main__"):
     print("Budget: ", bud)
     print("Set: ", set)
     print("Total Coverage: ", grid.totalCover(set))
-    grid.resetCoverage()
+    grid.resetCoverage()"""
     setBud = grid.Random()
     set = setBud[0]
     bud = setBud[1]
@@ -200,7 +241,7 @@ if (__name__ == "__main__"):
     print("Set: ", set)
     print("Total Coverage: ", grid.totalCover(set=set))
     grid.resetCoverage()
-    setBud = grid.Dynamic()
+    setBud = grid.Dynamic2()
     set = setBud[0]
     bud = setBud[1]
     print("Budget: ", bud)

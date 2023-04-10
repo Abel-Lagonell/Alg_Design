@@ -53,6 +53,9 @@ class Node:
     
     def getY(self):
         return self.__y
+    
+    def getID(self):
+        return self.ID
 
     def getVisited(self):
         return self.__visited
