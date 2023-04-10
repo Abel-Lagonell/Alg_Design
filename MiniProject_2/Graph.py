@@ -66,13 +66,13 @@ class Graph:
             fig.add_shape(type="circle", xref="x", yref="y", x0=node.getX()-radius, y0=node.getY()-radius, x1=node.getX()+radius, y1=node.getY()+radius, line=dict(color=color, width=2, dash='dash'))
             
         if (type==0):
-            fig.add_annotation(x=1.3, y=.85,xref = "paper", yref = "paper",  text=f'Random cost: {enclosedCost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
+            fig.add_annotation(x=1.3, y=.80,xref = "paper", yref = "paper",  text=f'Random cost: {enclosedCost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
         elif(type==1):
-            fig.add_annotation(x=1.3, y=0.80,xref = "paper", yref = "paper",  text=f'Greedy cost: {enclosedCost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
+            fig.add_annotation(x=1.29, y=0.75,xref = "paper", yref = "paper",  text=f'Greedy cost: {enclosedCost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
         elif(type==2):
-            fig.add_annotation(x=1.3, y=0.75,xref = "paper", yref = "paper",  text=f'Set Cover cost: {enclosedCost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
+            fig.add_annotation(x=1.33, y=0.70,xref = "paper", yref = "paper",  text=f'Set Cover cost: {enclosedCost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
         elif(type==3):
-            fig.add_annotation(x=1.3, y=0.70,xref = "paper", yref = "paper",  text=f'Dynamic cost: {enclosedCost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
+            fig.add_annotation(x=1.31, y=0.63,xref = "paper", yref = "paper",  text=f'Dynamic cost: {enclosedCost:.2f}',font=dict(size=16), showarrow=False, bgcolor = 'white', bordercolor = 'black', borderwidth = 2, borderpad = 4)
 
         
     
