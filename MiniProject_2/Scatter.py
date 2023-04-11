@@ -80,7 +80,7 @@ def getData(type:bool, ran:list[int] ,graph:bool, randCov:list[int], randBud:lis
         coveCov.append(tC)
         coveBud.append(bud)
         grid.resetCoverage()
-        setBud = grid.Dynamic()
+        setBud = grid.Dynamic2()
         set = setBud[0]
         bud = setBud[1]
         tC = grid.totalCover(set)
@@ -122,9 +122,11 @@ for independent in [0,1]:
         changing_RAND=[]
         changing_GREED=[]
         changing_COVER=[]
+        changing_DYNAMIC=[]
         changing_RAND_BUDGET=[]
         changing_GREED_BUDGET=[]
         changing_COVER_BUDGET=[]
+        changing_DYNAMIC_BUDGET=[]
         x_axis = "Budget"
         #Setting up the title and x-axis
         if (independent == 0):

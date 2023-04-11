@@ -190,7 +190,6 @@ class Grid:
         tempBudget =0
         for node in coveredSet:
             tempBudget += node.getCost()
-        print(cell[0])
         return (coveredSet,tempBudget)
         
     #Dynamic Programming Algorithm uses a bottom-up approach
