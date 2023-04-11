@@ -173,7 +173,7 @@ class Grid:
         return (covered_nodes, round(self.__BUDGET - remaining_budget,2))
 
     #Using dynamic allocation of nodes to get the best coverage recursively
-    def Dynamic2(self):#! Does not add more IDs to the matrix list
+    def Dynamic2(self):#! Does not preform better than the set cover and greedy but does do better than random
         tempBudget = self.__BUDGET
         tempNodes = copy.deepcopy(self.__PQCOST.getQueue())
         allNodes = copy.deepcopy(self.__NODES)
@@ -187,11 +187,10 @@ class Grid:
         for i in cell[1]:
             if (i != -1):
                 coveredSet.append(allNodes[i])
-        for x in coveredSet:
-            print(x)
         tempBudget =0
         for node in coveredSet:
             tempBudget += node.getCost()
+        print(cell[0])
         return (coveredSet,tempBudget)
         
     #Dynamic Programming Algorithm uses a bottom-up approach
@@ -200,15 +199,17 @@ class Grid:
         if (n==0):
             return self.__default_val
         #If the cost of the node is higher than the budget
-        if (tempNodes[n-1].getCost() > b):
+        cost = tempNodes[n-1].getCost()
+        if (cost > b):
             return self.__checkMatrix(n-1,b,tempNodes)
         else:
-            withNode = self.__checkMatrix(n-1, m.floor(b-tempNodes[n-1].getCost()),tempNodes)
+            withNode = self.__checkMatrix(n-1, b-m.ceil(tempNodes[n-1].getCost()),tempNodes)
             withoutNode = self.__checkMatrix(n-1,b,tempNodes)
             coverNode = self.calcCover(tempNodes[n-1],tempNodes)
             if (withNode[0] + coverNode > withoutNode[0]):
                 self.setCoverage(tempNodes[n-1],tempNodes)
-                list = self.__addArray(withNode[1],tempNodes[n-1].getID())
+                ID = tempNodes[n-1].getID()
+                list = self.__addArray(withNode[1],ID)
                 return (withNode[0] + coverNode, list)
             else:
                 return withoutNode
@@ -225,7 +226,7 @@ class Grid:
     def __addArray(self, arr1:list[int], ID:int) -> list[int]:
         for i in range(len(arr1)):
             for j in range(len(arr1)):
-                if (arr1[j] == arr1[i] and arr1[j] != -1):
+                if (arr1[j] == arr1[i] and arr1[j] != -1 and i != j):
                     return arr1
             if (arr1[i] == -1):
                 arr1[i] = ID
@@ -235,9 +236,10 @@ class Grid:
 
 if (__name__ == "__main__"):
     grid = Grid(budget=40, uniform=True)
-    """setBud = grid.SetCover()
+    setBud = grid.SetCover()
     set = setBud[0]
     bud = setBud[1]
+    print ("---SET COVER---")
     print("Budget: ", bud)
     print("Set: ", set)
     print("Total Coverage: ", grid.totalCover(set))
@@ -245,13 +247,15 @@ if (__name__ == "__main__"):
     setBud = grid.Greedy()
     set = setBud[0]
     bud = setBud[1]
+    print("---GREEDY---")
     print("Budget: ", bud)
     print("Set: ", set)
     print("Total Coverage: ", grid.totalCover(set))
-    grid.resetCoverage()"""
+    grid.resetCoverage()
     setBud = grid.Random()
     set = setBud[0]
     bud = setBud[1]
+    print("---RANDOM---")
     print("Budget: ", bud)
     print("Set: ", set)
     print("Total Coverage: ", grid.totalCover(set=set))
@@ -259,6 +263,7 @@ if (__name__ == "__main__"):
     setBud = grid.Dynamic2()
     set = setBud[0]
     bud = setBud[1]
+    print("---DYNAMIC---")
     print("Budget: ", bud)
     print("Set: ", set)
     print("Total Coverage: ", grid.totalCover(set=set))
