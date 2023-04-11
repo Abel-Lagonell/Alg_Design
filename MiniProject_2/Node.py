@@ -12,7 +12,7 @@ class Node:
 
     #String representation of the Node
     def __str__(self):
-        return "City: ({:3}, {:3})\tCost: {:1.2f}\tClass: {}".format(self.__x, self.__y, self.__cost, self.bracket())
+        return "City: ({:3}, {:3})\tCost: {:1.2f}".format(self.__x, self.__y, self.__cost)
     
     def __repr__(self):
         return "{:02}".format(self.ID)

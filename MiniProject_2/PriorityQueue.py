@@ -109,6 +109,7 @@ class PriorityQueue:
         return -1
 
     def findID(self, ID:int) -> int:
+        if ID < 0: return -1
         for i in range(self.__size):
             if (self.__queue[i][0].ID == ID):
                 return i
