@@ -2,6 +2,7 @@ import copy
 import random as rand
 import numpy as np
 import math as m
+import sys 
 from PriorityQueue import PriorityQueue as PQ
 from Node import Node
 
@@ -132,7 +133,7 @@ class Grid:
         return (coveredSet, round(self.__BUDGET-tempBudget,1))
 
     #Using dynamic allocation of nodes to get the best coverage recursively
-    def DynamicBU(self):#!Preforms better than the others but still not consistent
+    def DynamicBU(self):
         multiplier = 10
         tempBudget = self.__BUDGET*multiplier
         tempNodes = copy.deepcopy(self.__NODES)
@@ -155,6 +156,8 @@ class Grid:
         #Getting the Budget of the set
         for node in coveredSet:
             tempBudget += node.getCost()/multiplier
+        if (tempBudget > self.__BUDGET):
+            sys.exit("Budget Exceeded")
         return (coveredSet,round(tempBudget,1))
         
     #Dynamic Programming Algorithm uses a bottom-up approach
