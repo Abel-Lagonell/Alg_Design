@@ -155,7 +155,7 @@ class Grid:
         #Getting the Budget of the set
         for node in coveredSet:
             tempBudget += node.getCost()/multiplier
-        return (coveredSet,round(self.__BUDGET - tempBudget,1))
+        return (coveredSet,round(tempBudget,1))
         
     #Dynamic Programming Algorithm uses a bottom-up approach
     def __DynamicRecur(self, n:int, b:int, tempNodes:list[Node]):
