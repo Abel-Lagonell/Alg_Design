@@ -35,7 +35,7 @@ class Graph:
             [('Random Algorithm', self.grid.Random()), 
              ('Pure Greedy Algorithm', self.grid.Greedy()), 
              ('Greedy Set Cover Algorithm', self.grid.SetCover()),
-             ('Dynamic Programming Algorithm', self.grid.Dynamic())]
+             ('Dynamic Programming Algorithm', self.grid.DynamicBU())]
         ):
             Node = NodeBudget[0]
             Budget = NodeBudget[1]
