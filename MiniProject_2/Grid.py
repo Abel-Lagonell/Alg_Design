@@ -13,9 +13,11 @@ class Grid:
         self.__PQCOST = PQ()
         self.setNodes(uniform)
 
+    #Returns the PQ of the nodes
     def getNodes(self):
         return self.__PQCOST
 
+    #Sets the Nodes to be used in the grid
     def setNodes(self, uniform:bool):
         if (uniform==True):
             self.__NODES = [Node(cost=round(rand.uniform(0.1,8.0), 2), ID=i) for i in range(18)]
@@ -36,6 +38,7 @@ class Grid:
         for node in self.__NODES:
                 self.__PQCOST.push(node, node.getCost())
 
+    #Setting the coverage of the nodes
     def setCoverage(self, node:Node, set:list[Node]):
         for node2 in set:
             if (node2.getVisited() == False):
@@ -60,6 +63,7 @@ class Grid:
                 coverage += 1
         return coverage
     
+    #Resetting the coverage of the nodes
     def resetCoverage(self):
         for node in self.__NODES:
             node.setVisited(False)
@@ -83,6 +87,7 @@ class Grid:
                 count +=1
         return count
     
+    #Recalculating the coverage of the nodes
     def reCalc(self, set:PQ):
         for i in range(set.getSize()-1):
             tempCalc = self.calcCover(set.getQueue()[i],set.getQueue())
@@ -90,6 +95,7 @@ class Grid:
             set.getPQ()[i][1] = round(tempCalc/tempCost,2)
         set.sortWhole()
 
+    #Randomly selecting nodes
     def Random(self):
         tempBudget = self.__BUDGET
         coveredSet = list[Node]()
@@ -107,6 +113,7 @@ class Grid:
                 break
         return (coveredSet, round(self.__BUDGET-tempBudget))
     
+    #Using the greedy algorithm to select the best nodes
     def Greedy(self):
         tempBudget = self.__BUDGET
         coveredSet= list[Node]()
@@ -118,6 +125,7 @@ class Grid:
             tempBudget -= tempNode.getCost()
         return (coveredSet, round(self.__BUDGET-tempBudget,2))
 
+    #Using the dynamic allocation of nodes to get the best coverage
     def SetCover(self):
         tempBudget = self.__BUDGET
         coveredSet= list[Node]()
@@ -137,18 +145,22 @@ class Grid:
         tempBudget = self.__BUDGET*10
         tempNodes = copy.deepcopy(self.__PQCOST.getQueue())
         allNodes = copy.deepcopy(self.__NODES)
+        #Multiplying the cost by 10 to make it easier to work with
         for node in tempNodes:
             node.setCost(node.getCost()*10)
         #Setting up the matrix that will hold all the values
         self.__dtype = np.dtype([('coverage', int), ('IDs', int, (18,))])
         self.__default_val = (0, np.full(shape = (18,), fill_value=-1, dtype=int))
-        self.__matrix = np.full(shape = (19,tempBudget+1), fill_value=-1, dtype=self.__dtype)
-        cell = self.__checkMatrix(18,tempBudget,tempNodes)
+        self.__matrix = np.full(shape = (19,tempBudget+1), fill_value=-1, dtype=self.__dtype) #Matrix Made
+        cell = self.__checkMatrix(18,tempBudget,tempNodes) #Starts the recursion bottom up
         coveredSet = list[Node]()
+        
+        #Getting the nodes that were selected
         for i in cell[1]:
             if (i != -1):
                 coveredSet.append(allNodes[i])
         tempBudget =0
+        #Getting the Budget of the set
         for node in coveredSet:
             tempBudget += node.getCost()
         return (coveredSet,tempBudget)
@@ -163,6 +175,7 @@ class Grid:
         if (cost > b):
             return self.__checkMatrix(n-1,b,tempNodes)
         else:
+            #Check if the node should be included
             withNode = self.__checkMatrix(n-1, b-m.ceil(tempNodes[n-1].getCost()),tempNodes)
             withoutNode = self.__checkMatrix(n-1,b,tempNodes)
             coverNode = self.calcCover(tempNodes[n-1],tempNodes)
@@ -182,6 +195,7 @@ class Grid:
         else:
             return self.__matrix[n,b]
         
+    #Adds the ID to the array on the first empty spot
     def __addArray(self, arr1:list[int], ID:int) -> list[int]:
         for i in range(len(arr1)):
             for j in range(len(arr1)):
