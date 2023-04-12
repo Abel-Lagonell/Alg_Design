@@ -132,52 +132,13 @@ class Grid:
             self.reCalc(tempPQ)
         return (coveredSet, round(self.__BUDGET-tempBudget,2))
 
-    def Dynamic(self):
-        # Dynamic Programming Algorithm uses a bottom-up approach
-        # Creating list to store max coverage for each node and remaining budget
-        # Abel yelled at me for not creating temp values
-        # Deepcopy ensure that the new copy will not affect the original nodes list
-        tempBudget = self.__BUDGET
-        tempNodes = copy.deepcopy(self.__NODES)
-        max_coverage = [[0] * (tempBudget + 1) for __ in range(len(tempNodes) + 1)]
-
-        # Initialize list to store covered nodes
-        covered_nodes = list[Node]()
-
-        # Loop through each node and each possible budget
-        for i in range(len(tempNodes) + 1):
-            for j in range(tempBudget + 1):
-                # Base case: if the budget is 0 or the node index is 0, set max coverage to 0
-                if i == 0 or j == 0:
-                    max_coverage[i][j] = 0
-                else:
-                    # Calculate the coverage of the current node
-                    node_coverage = self.calcCover(tempNodes[i-1], tempNodes)
-                    # Calculate the remaining budget after selecting the current node
-                    remaining_budget = j - tempNodes[i-1].getCost()
-                    # Calculate the maximum coverage with and without the current node
-                    max_with_node = node_coverage + max_coverage[int(i-1)][int(remaining_budget)]
-                    max_without_node = max_coverage[i-1][j]
-                    # Choose the maximum coverage between with and without the current node
-                    if max_with_node > max_without_node:
-                        # Set the coverage of the current node and add it to the covered nodes list
-                        tempNodes[i-1].setVisited()
-                        covered_nodes.append(tempNodes[i-1])
-                        max_coverage[i][j] = max_with_node
-                    else:
-                        max_coverage[i][j] = max_without_node
-
-        # Reset the visited flag of all nodes
-        self.resetCoverage()
-
-        return (covered_nodes, round(self.__BUDGET - remaining_budget,2))
-
     #Using dynamic allocation of nodes to get the best coverage recursively
-    def Dynamic2(self):#! Does not preform better than the set cover and greedy but does do better than random
-        tempBudget = self.__BUDGET
+    def Dynamic2(self):#!Preforms better than the others but still not consistent
+        tempBudget = self.__BUDGET*10
         tempNodes = copy.deepcopy(self.__PQCOST.getQueue())
         allNodes = copy.deepcopy(self.__NODES)
-
+        for node in tempNodes:
+            node.setCost(node.getCost()*10)
         #Setting up the matrix that will hold all the values
         self.__dtype = np.dtype([('coverage', int), ('IDs', int, (18,))])
         self.__default_val = (0, np.full(shape = (18,), fill_value=-1, dtype=int))
@@ -233,7 +194,7 @@ class Grid:
 
 
 if (__name__ == "__main__"):
-    grid = Grid(budget=40, uniform=True)
+    grid = Grid(budget=10, uniform=True)
     setBud = grid.SetCover()
     set = setBud[0]
     bud = setBud[1]
