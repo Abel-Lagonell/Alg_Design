@@ -206,7 +206,6 @@ class Grid:
             withoutNode = self.__checkMatrix(n-1,b,tempNodes)
             coverNode = self.calcCover(tempNodes[n-1],tempNodes)
             if (withNode[0] + coverNode > withoutNode[0]):
-                self.setCoverage(tempNodes[n-1],tempNodes)
                 ID = tempNodes[n-1].getID()
                 list = self.__addArray(withNode[1],ID)
                 return (withNode[0] + coverNode, list)

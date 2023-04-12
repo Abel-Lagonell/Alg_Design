@@ -114,8 +114,8 @@ for independent in [0,1]:
                 else:
                     title = "Clustered Budget (Iterative Graph) vs Coverage"
 
-        #getData(type= type, graph=constant, randCov= changing_RAND, greeCov= changing_GREED, coveCov= changing_COVER, ran=list, randBud= changing_RAND_BUDGET, greeBud= changing_GREED_BUDGET, coveBud= changing_COVER_BUDGET, dynaCov= changing_DYNAMIC, dynaBud= changing_DYNAMIC_BUDGET)
-        #makeCoverageGraph(randCov=changing_RAND, greeCov=changing_GREED, coveCov=changing_COVER, title=title, x_axis=x_axis, ran=list, dynaCov=changing_DYNAMIC)
+        getData(type= type, graph=constant, randCov= changing_RAND, greeCov= changing_GREED, coveCov= changing_COVER, ran=list, randBud= changing_RAND_BUDGET, greeBud= changing_GREED_BUDGET, coveBud= changing_COVER_BUDGET, dynaCov= changing_DYNAMIC, dynaBud= changing_DYNAMIC_BUDGET)
+        makeCoverageGraph(randCov=changing_RAND, greeCov=changing_GREED, coveCov=changing_COVER, title=title, x_axis=x_axis, ran=list, dynaCov=changing_DYNAMIC)
 
 for independent in [0,1]:
     for constant in [0,1]:
