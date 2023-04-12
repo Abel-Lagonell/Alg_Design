@@ -4,7 +4,7 @@ import math
 # Initialize the Nodes
 class Node:
     #Constructor, RADIUS = 5
-    def __init__(self, cost:int, type = 0, x=50, y=50, ID=0):
+    def __init__(self, cost, type = 0, x=50, y=50, ID=0):
         self.setCoords(type, x, y)
         self.setCost(cost)
         self.__visited = False
@@ -33,7 +33,7 @@ class Node:
             self.__x = random.randint(0, 10) + x
             self.__y = random.randint(0, 10) + y
     
-    def setCost(self, cost:int):
+    def setCost(self, cost):
         self.__cost = cost
 
     #Setting the node as visited

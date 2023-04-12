@@ -14,13 +14,16 @@ class Grid:
         self.setNodes(uniform)
 
     #Returns the PQ of the nodes
-    def getNodes(self):
+    def getNodes(self, type = False):
+        if type: return self.__NODES 
         return self.__PQCOST
 
     #Sets the Nodes to be used in the grid
     def setNodes(self, uniform:bool):
         if (uniform==True):
-            self.__NODES = [Node(cost=round(rand.uniform(0.1,8.0), 2), ID=i) for i in range(18)]
+            cost = round(rand.uniform(0.1,8.0),1)
+            self.__NODES = [Node(cost=cost, ID=i) for i in range(18)]
+            #self.__NODES = [Node(cost=rand.randint(1,8), ID=i) for i in range(18)]
         else:
             count = 0
             for i in range(3):
@@ -28,11 +31,11 @@ class Grid:
                 y = rand.randint(10,90)
                 for j in range(6):
                     if (i == 0):
-                        bracket = rand.uniform(5,8)
+                        bracket = round(rand.uniform(5,8),1)
                     elif (i ==1):
-                        bracket = rand.uniform(2,4)
+                        bracket = round(rand.uniform(2,4),1)
                     else: 
-                        bracket = rand.uniform(0.1,1.0)
+                        bracket = round(rand.uniform(0.1,1.0),1)
                     self.__NODES.append(Node(cost = round(bracket,2), x=x, y=y, ID= count,type=1))
                     count+=1
         for node in self.__NODES:
@@ -44,39 +47,24 @@ class Grid:
             if (node2.getVisited() == False):
                 if (node.getDistance(node2.getX(), node2.getY()) <= 5):
                     node2.setVisited()
-
-
-    #calculating total coverage
-    def totalCover(self):
-        coverage = 0
-        for node in self.__NODES:
-            if (node.getVisited() == True) :
-                coverage += 1
-        return coverage
-    
-    
-    #calculating total coverage
-    def totalCover(self):
-        coverage = 0
-        for node in self.__NODES:
-            if (node.getVisited() == True) :
-                coverage += 1
-        return coverage
     
     #Resetting the coverage of the nodes
-    def resetCoverage(self):
-        for node in self.__NODES:
+    def resetCoverage(self, set:list[Node] = None):
+        if (set == None): set = self.__NODES
+        for node in set:
             node.setVisited(False)
 
     #Calculating the coverage of the set
-    def totalCover(self, set:list[Node]):
+    def totalCover(self, set:list[Node], universe:list[Node] = None):
         count =0
-        self.resetCoverage()
+        self.resetCoverage(universe)
+        if (universe == None): universe = self.__NODES
         for node in set:
-            for node2 in self.__NODES:
+            for node2 in universe:
                 if (node.getDistance(node2.getX(), node2.getY()) <= 5 and node2.getVisited() == False):
                     count +=1
                     node2.setVisited()
+        self.resetCoverage(universe)
         return count
     
     #Calculating the coverage of the node and setting surrounding nodes as visited
@@ -85,6 +73,8 @@ class Grid:
         for node2 in set:
             if (node.getDistance(node2.getX(), node2.getY()) <= 5 and node2.getVisited() == False):
                 count +=1
+                node2.setVisited()
+        self.resetCoverage(set)
         return count
     
     #Recalculating the coverage of the nodes
@@ -111,7 +101,7 @@ class Grid:
                 tempPQ.popIndex(index)
             else: 
                 break
-        return (coveredSet, round(self.__BUDGET-tempBudget))
+        return (coveredSet, round(self.__BUDGET-tempBudget,1))
     
     #Using the greedy algorithm to select the best nodes
     def Greedy(self):
@@ -123,9 +113,9 @@ class Grid:
             self.setCoverage(tempNode, tempPQ.getQueue())
             coveredSet.append(tempNode)
             tempBudget -= tempNode.getCost()
-        return (coveredSet, round(self.__BUDGET-tempBudget,2))
+        return (coveredSet, round(self.__BUDGET-tempBudget,1))
 
-    #Using the dynamic allocation of nodes to get the best coverage
+    #Using Set Cover algorithm to select the best nodes
     def SetCover(self):
         tempBudget = self.__BUDGET
         coveredSet= list[Node]()
@@ -138,16 +128,18 @@ class Grid:
             tempBudget -= tempNode.getCost()
             tempPQ.prune()
             self.reCalc(tempPQ)
-        return (coveredSet, round(self.__BUDGET-tempBudget,2))
+            tempPQ.sortWhole()
+        return (coveredSet, round(self.__BUDGET-tempBudget,1))
 
     #Using dynamic allocation of nodes to get the best coverage recursively
-    def Dynamic2(self):#!Preforms better than the others but still not consistent
-        tempBudget = self.__BUDGET*10
-        tempNodes = copy.deepcopy(self.__PQCOST.getQueue())
+    def DynamicBU(self):#!Preforms better than the others but still not consistent
+        multiplier = 10
+        tempBudget = self.__BUDGET*multiplier
+        tempNodes = copy.deepcopy(self.__NODES)
         allNodes = copy.deepcopy(self.__NODES)
-        #Multiplying the cost by 10 to make it easier to work with
+        #Multiplying the cost by the multiplier to make it easier to work with
         for node in tempNodes:
-            node.setCost(node.getCost()*10)
+            node.setCost(int(node.getCost()*multiplier))
         #Setting up the matrix that will hold all the values
         self.__dtype = np.dtype([('coverage', int), ('IDs', int, (18,))])
         self.__default_val = (0, np.full(shape = (18,), fill_value=-1, dtype=int))
@@ -158,12 +150,12 @@ class Grid:
         #Getting the nodes that were selected
         for i in cell[1]:
             if (i != -1):
-                coveredSet.append(allNodes[i])
+                coveredSet.append(tempNodes[i])
         tempBudget =0
         #Getting the Budget of the set
         for node in coveredSet:
-            tempBudget += node.getCost()
-        return (coveredSet,tempBudget)
+            tempBudget += node.getCost()/multiplier
+        return (coveredSet,round(self.__BUDGET - tempBudget,1))
         
     #Dynamic Programming Algorithm uses a bottom-up approach
     def __DynamicRecur(self, n:int, b:int, tempNodes:list[Node]):
@@ -181,8 +173,8 @@ class Grid:
             coverNode = self.calcCover(tempNodes[n-1],tempNodes)
             if (withNode[0] + coverNode > withoutNode[0]):
                 ID = tempNodes[n-1].getID()
-                list = self.__addArray(withNode[1],ID)
-                return (withNode[0] + coverNode, list)
+                listNode = self.__addArray(withNode[1],ID)
+                return (withNode[0] + coverNode, listNode)
             else:
                 return withoutNode
         
@@ -208,13 +200,14 @@ class Grid:
 
 
 if (__name__ == "__main__"):
-    grid = Grid(budget=10, uniform=True)
+    grid = Grid(budget=25, uniform=False)
     setBud = grid.SetCover()
     set = setBud[0]
     bud = setBud[1]
     print ("---SET COVER---")
     print("Budget: ", bud)
     print("Set: ", set)
+    grid.resetCoverage()
     print("Total Coverage: ", grid.totalCover(set))
     grid.resetCoverage()
     setBud = grid.Greedy()
@@ -223,6 +216,7 @@ if (__name__ == "__main__"):
     print("---GREEDY---")
     print("Budget: ", bud)
     print("Set: ", set)
+    grid.resetCoverage()
     print("Total Coverage: ", grid.totalCover(set))
     grid.resetCoverage()
     setBud = grid.Random()
@@ -231,12 +225,14 @@ if (__name__ == "__main__"):
     print("---RANDOM---")
     print("Budget: ", bud)
     print("Set: ", set)
+    grid.resetCoverage()
     print("Total Coverage: ", grid.totalCover(set=set))
     grid.resetCoverage()
-    setBud = grid.Dynamic2()
+    setBud = grid.DynamicBU()
     set = setBud[0]
     bud = setBud[1]
     print("---DYNAMIC---")
     print("Budget: ", bud)
     print("Set: ", set)
+    grid.resetCoverage()
     print("Total Coverage: ", grid.totalCover(set=set))
