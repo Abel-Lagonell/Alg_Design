@@ -40,7 +40,7 @@ class TimeComplexity:
         for i in range(10):
             start_time = time.time()
             grid = Grid(10, 50)
-            nodes = grid.SetCover()
+            nodes = grid.DynamicBUCover()
             end_time = time.time()
             total_time += end_time - start_time
         return total_time/10
